@@ -1,0 +1,17 @@
+.register-page .form_container {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  width: 300px;
+  padding: 2%;
+}
+
+.register-page .hyperlink {
+  margin-top: 1rem;
+}
+
+.register-page .error-txt {
+  color: red;
+  margin: auto;
+  margin-bottom: 10px;
+}
