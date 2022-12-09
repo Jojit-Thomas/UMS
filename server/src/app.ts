@@ -7,18 +7,19 @@ import cookieParser from "cookie-parser";
 import express, { ErrorRequestHandler } from "express";
 import authRouter from "./routes/auth";
 import studentRouter from "./routes/index";
-import unviersityRouter from "./routes/university";
 import collegeRouter from "./routes/college";
+import teacherRouter from "./routes/teacher";
+import unviersityRouter from "./routes/university";
 
 
-import {connectRedis} from './config/redis'
+import { connectRedis } from './config/redis'
 const client = connectRedis();
 
 import dotenv from "dotenv"
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 
-mongoose.connect(`mongodb+srv://UMS:${process.env.MONGO_PASSWORD}@cluster0.yzsgttr.mongodb.net/?retryWrites=true&w=majority`, {dbName : "UMS"});
+mongoose.connect(`mongodb+srv://UMS:${process.env.MONGO_PASSWORD}@cluster0.yzsgttr.mongodb.net/?retryWrites=true&w=majority`, { dbName: "UMS" });
 
 mongoose.connection.on("connecting", () => {
   console.log("Connecting to Database");
@@ -43,11 +44,9 @@ process.on("SIGINT", () => {
 
 
 const app = express();
-const corsOptions = {
-  origin: "*",
-};
 
-app.use(cors(corsOptions));
+
+app.use(cors({origin: "*"}));
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -58,6 +57,7 @@ app.use("/api", studentRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/college", collegeRouter);
 app.use("/api/university", unviersityRouter);
+app.use("/api/teacher", teacherRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -70,7 +70,7 @@ const errorHandler: ErrorRequestHandler = function (err, req, res, next) {
   res.locals.error = req.app.get("env") === "development" ? err : {};
   console.error("``Err : ``", err.status, err.message);
   // render the error page
-  res.status(err.status || 500).json("Internal Server Error");
+  res.status(err.status || 500).json(err.message || "Internal Server Error");
   // res.render("error");
 };
 // error handler

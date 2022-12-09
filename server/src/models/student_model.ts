@@ -25,7 +25,7 @@ export interface Student {
 
 const studentSchema = new mongoose.Schema({
   _id : {
-    type : String,
+    type : Types.ObjectId,
     default : new Types.ObjectId
   },
   name : String,
@@ -36,7 +36,10 @@ const studentSchema = new mongoose.Schema({
   password : String,
   phone : String,
   address: String,
-  isBlocked : Boolean,
+  isBlocked : {
+    type : Boolean,
+    default : false
+  },
   DOB : Date,
   gender : String,
   batch : String,
@@ -47,4 +50,4 @@ const studentSchema = new mongoose.Schema({
   }]
 }, {_id : false})
 
-export const studentModel = mongoose.model("studentSchema", studentSchema, STUDENT_COLLECTION)
+export const studentModel = mongoose.model("studentModel", studentSchema, STUDENT_COLLECTION)

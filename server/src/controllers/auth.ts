@@ -1,35 +1,26 @@
-// const { isRegisterFormValid } = require("../services/Validation/registerForm");
 import { NextFunction, Request, RequestHandler, Response } from "express"
-
-import { isRegisterFormValid } from "../services/validation"
-// const bcrypt = require("bcrypt");
 import bcrypt from "bcrypt";
-// const AuthDB = require("../services/auth");
-import AuthDB from "../services/auth"
-// const jwt = require("jsonwebtoken");
 import jwt from "jsonwebtoken";
-// require("dotenv").config();
 import path from "path";
-//
 import dotenv from "dotenv"
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-// import { user_type } from "../models/user_model";
 import { connectRedis } from "../config/redis";
 import createHttpError from "http-errors";
-import userDB from "../services/user";
+import studentDB from "../services/student";
 const client = connectRedis();
 
 const signRefreshToken = (payload: Object) => {
 
 }
 
-const login = async (req: Request, res: Response, next: NextFunction) => {
+const studentLogin: RequestHandler = async (req, res, next) => {
   try {
     if (!process.env.JWT_ACCESS_TOKEN) throw new Error("Jwt access token is not provided in env")
     if (!process.env.JWT_REFRESH_TOKEN) throw new Error("Jwt refresh token is not provided in env")
-    let user: any = await userDB.getUserByEmail(req.body.email);
-    if (!req.body.password) throw ({ status: 401, message: "Password is required" });
-    let isPasswordValid = await bcrypt.compare(req.body.password, user.password);
+    const {email, password} = req.body
+    if(!email || !password) throw createHttpError.BadRequest("Email and Password is required")
+    let user: any = await studentDB.fetchAStudentDetails(email)
+    let isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw ({ status: 401, message: "Email or password is wrong" });
     if (user.isBlocked) throw createHttpError.Unauthorized("You are blocked by the admin")
     let accessToken = jwt.sign({ name: user.name }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "24h", audience: user.email });
@@ -38,28 +29,27 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json({ accessToken, refreshToken, user: user.name })
   } catch (err: any) {
     if (err.status >= 400 && err.status < 500) {
-      err.status === 404 ? err.message = "Email or Password is wrong" : null
       res.status(err.status).json(err.message);
     }
     else next(err);
   }
 }
 
-const register = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    let user = await isRegisterFormValid(req.body);
-    user.password = await bcrypt.hash(user.password, 10);
-    user.isBlocked = false
-    await AuthDB.createUser(user);
-    res.status(200).json("Registered successfully");
-  } catch (err) {
-    if (err instanceof Error) {
-      if (err.status >= 400 && err.status < 500)
-        res.status(err.status).json(err.message);
-    }
-    else next(err);
-  }
-}
+// const register = async (req: Request, res: Response, next: NextFunction) => {
+//   try {
+//     let user = await isRegisterFormValid(req.body);
+//     user.password = await bcrypt.hash(user.password, 10);
+//     user.isBlocked = false
+//     await AuthDB.createUser(user);
+//     res.status(200).json("Registered successfully");
+//   } catch (err) {
+//     if (err instanceof Error) {
+//       if (err.status >= 400 && err.status < 500)
+//         res.status(err.status).json(err.message);
+//     }
+//     else next(err);
+//   }
+// }
 
 const refreshAccessToken: RequestHandler = async (req, res, next) => {
   try {
@@ -121,4 +111,4 @@ const universityLogin: RequestHandler = (req, res) => {
 
 
 
-export default { login, register, refreshAccessToken, logout, universityLogin };
+export default { studentLogin, refreshAccessToken, logout, universityLogin };

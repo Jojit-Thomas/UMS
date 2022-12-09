@@ -17,7 +17,8 @@ export interface studentApplicationFormType  {
    phone : String,
    admissionPreference :  [admissionPreferenceType],
    gender : Gender,
-   markListLink : String
+   markListLink : String,
+   DOB : Date
 }
 
 
@@ -40,6 +41,7 @@ const studentApplicationSchema = new mongoose.Schema({
     enum : ['MALE','FEMALE']
   },
   markListLink: String,
+  DOB : Date,
 }, {_id : false})
 
 

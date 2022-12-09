@@ -1,7 +1,6 @@
 // var express = require("express");
 import express from "express"
-import bus from "../controllers/bus";
-import user from "../controllers/user";
+import subject from "../controllers/subject";
 import { verifyUniversity } from "../middlewares/auth";
 var router = express.Router();
 
@@ -10,9 +9,8 @@ router.get("/",verifyUniversity, function (req, res, next) {
   
 });
 
-router.get("/", verifyUniversity, user.allUsers)
+router.post("/subject/add", subject.createSubject)
 
-router.put("/", verifyUniversity, user.block_user)
 
 
 

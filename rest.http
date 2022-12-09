@@ -8,20 +8,26 @@ Content-Type: application/json
   "gender" : "MALE",
   "totalMark" : 50,
   "markListLink" : "http://s3bucketlink",
-  "admissionPreference" : [{"college" : "507f191e810c19729de860ea","course" : "507f191e810c19729de860ea" }]
+  "admissionPreference" : [{"college" : "507f191e810c19729de860ea","course" : "507f191e810c19729de860ea" }],
+  "DOB": "10/10/2020"
 }
 
 ###
 
-POST http://localhost:4000/api/college/student/add
+POST http://localhost:4000/api/student/add
 Content-Type: application/json
 
 {
   "name" : "jojit",
   "email" : "jojit@gmail.com",
+  "phone" : "9900000000",
   "address" : "mallikasseril (H) Kochara P.O. Manthippara",
   "gender" : "MALE",
-  
+  "password" : "asdfasdf",
+  "batch" : "2022",
+  "DOB": "10/10/2020",
+  "isBlocked" : false,
+  "attendence" : [{"date" : "10/10/2020", "subject" : "chemistry", "isPresent" : true}]
 }
 
 ###
@@ -32,4 +38,64 @@ Content-Type: application/json
 {
   "email" : "university@gmail.com",
   "password" : "university"
+}
+
+### 
+
+GET http://localhost:4000/api/students
+
+###
+PATCH  http://localhost:4000/api/student/jojit@gmail.com/block
+
+###
+
+GET http://localhost:4000/api/student/jojit@gmail.com
+
+###
+
+POST http://localhost:4000/api/auth/student/login
+Content-Type: application/json
+
+{
+  "email" : "jojit@gmail.com",
+  "password" : "asdfasdf"
+}
+
+###
+
+POST http://localhost:4000/api/college/apply
+Content-Type: application/json
+
+{
+  "name" : "Lakedown College",
+  "collegeId" : "LAKEUK",
+  "place" : "United Kingdom",
+  "password" : "asdfasdf",
+  "university" : "507f1f77bcf86cd799439011",
+  "course" : [
+    {"ref" : "507f1f77bcf86cd799439011", "maxCandidate" : 30}
+  ]
+}
+###
+
+POST http://localhost:4000/api/teacher/apply
+Content-Type: application/json
+
+{
+  "name" : "John Doe",
+  "phone" : "9900000000",
+  "password" : "asdfasdf",
+  "subject" : "B.Tech",
+  "qualification" : "phd",
+  "gender" : "MALE",
+  "collegeId" : "LAKEUK"
+}
+
+###
+
+POST http://localhost:4000/api/university/subject/add 
+Content-Type: application/json
+
+{
+  "name" : "B.Tech"
 }

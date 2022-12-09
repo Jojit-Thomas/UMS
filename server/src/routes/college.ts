@@ -1,7 +1,8 @@
 import express from "express"
-import studentDB from "../services/student";
+import student from "../controllers/student";
+import college from "../controllers/college";
 const router = express.Router()
 
-router.post('/student/add', studentDB.createStudent)
+router.post('/apply', college.createCollege)
 
-export default router;
+export default router; 

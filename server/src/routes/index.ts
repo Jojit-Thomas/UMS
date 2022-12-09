@@ -1,6 +1,5 @@
 // var express = require('express');
 import express from "express";
-import bus from "../controllers/bus";
 import studentDB from "../controllers/student";
 import { verify } from "../middlewares/auth";
 // const { verify } = require('../middlewares/auth');
@@ -15,12 +14,16 @@ router.get("/", function (req, res) {
   res.status(200).json("Success Home page")
 })
 
+router.post('/student/add', studentDB.createStudent)
+
+router.get('/students', studentDB.allStudents)
+
+router.patch('/student/:email/block', studentDB.blockStudent);
+
+router.get('/student/:email', studentDB.getAStudent)
+
+
 router.post('/admission/apply', studentDB.createStudentAllotment)
 
-// router.get('/bus',verify, bus.allBus);
-
-// router.get('/bus/:id',verify, bus.busDetails);
-
-// router.post("/bus/book", bus.bookSeat)
 
 export default router;
