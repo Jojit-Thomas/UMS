@@ -2,7 +2,7 @@ import mongoose, { Types } from "mongoose"
 import { SUBJECTS_COLLECTION } from "../constants/constants"
 
 export interface Subject {
-  name : String,
+  name : string,
   teacher ?: Types.ObjectId
 }
 

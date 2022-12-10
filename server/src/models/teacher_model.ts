@@ -5,15 +5,15 @@ import { Gender } from "./typescript";
 
 export interface Teacher {
   _id : Types.ObjectId,
-  name : String,
-  email : String,
-  phone : String,
-  password : String,
+  name : string,
+  email : string,
+  phone : string,
+  password : string,
   subject : Types.ObjectId,
   classTeacher : Types.ObjectId,
-  qualification : String,
+  qualification : string,
   gender : Gender,
-  collegeId : String,
+  collegeId : string,
   isApproved : boolean
 }
 

@@ -6,7 +6,7 @@ var router = express.Router();
 
 /* GET users listing. */
 router.get("/",verifyUniversity, function (req, res, next) {
-  
+  res.send("asdasdfasdff")
 });
 
 router.post("/subject/add", subject.createSubject)

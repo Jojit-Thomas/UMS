@@ -4,9 +4,9 @@ import jwt from "jsonwebtoken";
 import path from "path";
 import dotenv from "dotenv"
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
-import { connectRedis } from "../config/redis";
-import createHttpError from "http-errors";
 import studentDB from "../services/student";
+import createHttpError from "http-errors";
+import { connectRedis } from "../config/redis";
 const client = connectRedis();
 
 const signRefreshToken = (payload: Object) => {
@@ -100,7 +100,8 @@ const universityLogin: RequestHandler = (req, res) => {
     if (!process.env.JWT_ADMIN_ACCESS_TOKEN) throw new Error("Jwt Admin Access token is not provided")
     if (req.body.email === process.env.ADMIN_EMAIL && req.body.password === process.env.ADMIN_PASSWORD) {
       const adminAccessToken = jwt.sign({}, process.env.JWT_ADMIN_ACCESS_TOKEN, { expiresIn: "24h" })
-      res.status(200).json({ adminAccessToken: adminAccessToken })
+      res.cookie("adminAccessToken", adminAccessToken, {maxAge : 24 * 60 * 60 * 1000})
+      res.sendStatus(204)
     } else {
       res.status(401).json("Email or Password is wrong")
     }

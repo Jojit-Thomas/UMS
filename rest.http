@@ -8,7 +8,7 @@ Content-Type: application/json
   "gender" : "MALE",
   "totalMark" : 50,
   "markListLink" : "http://s3bucketlink",
-  "admissionPreference" : [{"college" : "507f191e810c19729de860ea","course" : "507f191e810c19729de860ea" }],
+  "admissionPreference" : [{"collegeId" : "LAKEUK","course" : "507f191e810c19729de860ea" }],
   "DOB": "10/10/2020"
 }
 
@@ -33,12 +33,14 @@ Content-Type: application/json
 ###
 
 POST http://localhost:4000/api/auth/university/login
+Cookie: adminAccessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzA2NTU5MjksImV4cCI6MTY3MDc0MjMyOX0._nxF9e3v8-QXqlrMkXcHzEX2m6fypYSgcNCANxZEFdA; Max-Age=86400; Path=/; Expires=Sun, 11 Dec 2022 07:05:29 GMT
 Content-Type: application/json
 
 {
   "email" : "university@gmail.com",
   "password" : "university"
 }
+
 
 ### 
 
@@ -99,3 +101,6 @@ Content-Type: application/json
 {
   "name" : "B.Tech"
 }
+
+###
+

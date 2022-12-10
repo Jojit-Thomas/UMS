@@ -3,12 +3,12 @@ import { COLLEGE_COLLECTION } from "../constants/constants";
 
 export interface College {
   _id : Types.ObjectId,
-  name : String,
-  email : String,
-  collegeId : String,
-  Password : String,
-  Place : String,
-  University : String,
+  name : string,
+  email : string,
+  collegeId : string,
+  Password : string,
+  Place : string,
+  University : string,
   Course : [{
     ref : Types.ObjectId,
     maxCandidate : Number, 

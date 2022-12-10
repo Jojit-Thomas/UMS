@@ -4,45 +4,45 @@ import { Gender } from "./typescript"
 
 
 interface admissionPreferenceType {
-  college : String,
-  course : String
+  collegeId: string,
+  course: string
 }
 
 
-export interface studentApplicationFormType  {
-   name : String,
-   address : String,
-   email: String,
-   totalMark : Number,
-   phone : String,
-   admissionPreference :  [admissionPreferenceType],
-   gender : Gender,
-   markListLink : String,
-   DOB : Date
+export interface studentApplicationFormType {
+  name: string,
+  address: string,
+  email: string,
+  totalMark: Number,
+  phone: string,
+  admissionPreference: [admissionPreferenceType],
+  gender: Gender,
+  markListLink: string,
+  DOB: Date
 }
 
 
 const studentApplicationSchema = new mongoose.Schema({
-  _id : {
-    type : Types.ObjectId,
-    default : new Types.ObjectId
+  _id: {
+    type: Types.ObjectId,
+    default: new Types.ObjectId
   },
-  name : String,
-  address : String,
-  email : String,
-  totalMark : Number,
+  name: String,
+  address: String,
+  email: String,
+  totalMark: Number,
   phone: String,
-  admissionPreference : [{
-    college : String,
-    course : String
+  admissionPreference: [{
+    collegeId: String,
+    course: String
   }],
-  gender : {
-    type : String,
-    enum : ['MALE','FEMALE']
+  gender: {
+    type: String,
+    enum: ['MALE', 'FEMALE']
   },
   markListLink: String,
-  DOB : Date,
-}, {_id : false})
+  DOB: Date,
+}, { _id: false })
 
 
 export const studentApplicationModel = mongoose.model("studentApplicationModel", studentApplicationSchema, STUDENT_APPLICATION_FORM)
