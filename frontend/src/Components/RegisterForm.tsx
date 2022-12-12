@@ -2,13 +2,13 @@ import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Se
 import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import React, { Fragment } from 'react'
 import { Link } from 'react-router-dom'
-import { Values } from '../Pages/Student/Register'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 export interface Fields {
   id: number,
   name: string,
-  label: string
+  label: string,
+  error ?: string
 }
 
 export interface Select {
@@ -21,17 +21,17 @@ export interface Select {
   }>
 }
 
-function RegisterForm({ handleChange, handleSubmit,handleClear, handleSelectChange, handleDateChange, values, fields, selectFields, error }:
+function RegisterForm({ handleChange, handleSubmit, handleClear, handleSelectChange, handleDateChange, values, fields, selectFields, error }:
   {
     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
     handleSelectChange: (e: SelectChangeEvent) => void,
     handleSubmit: () => void, fields: Array<Fields>,
-    handleDateChange : (e: any) => void,
-    handleClear : () => void,
-    values: Values
+    handleDateChange: (e: any) => void,
+    handleClear: () => void,
+    values: any
     selectFields: Array<Select>, error: string
   }) {
-    
+
   return <Fragment>
     <Grid
       container
@@ -41,12 +41,13 @@ function RegisterForm({ handleChange, handleSubmit,handleClear, handleSelectChan
       sx={{ "minHeight": "100vh" }}
       className="login-page"
     >
-      <Paper elevation={10} className="form_container" sx={{ "padding": "30px", "maxWidth": "calc(550px + 5vw)" }}>
+      <Paper elevation={10} className="form_container" sx={{ "padding": "50px", "maxWidth": "calc(400px + 5vw)" }}>
+        <Typography variant='h5' marginBottom={2} textAlign="center" >Application Form</Typography>
         <Grid container spacing={2} marginBottom={2}>
           {
             fields.map(field => {
               return (
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <TextField key={field.id}
                     name={field.name}
                     id="outlined-error-helper-text"
@@ -55,27 +56,29 @@ function RegisterForm({ handleChange, handleSubmit,handleClear, handleSelectChan
                     value={values[field.name]}
                     fullWidth
                     onChange={handleChange}
+                    error= {field.error ? true : false}
+                    helperText={field.error}
                   />
                 </Grid>
               )
             })
           }
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Grid item xs={6}>
-            <DesktopDatePicker
-              label="Date of Birth"
-              inputFormat="YYYY/MM/DD"
-              value={values.DOB}
-              //@ts-ignore
-              onChange={handleDateChange}
-              renderInput={(params) => <TextField {...params} fullWidth />}
-            />  
-          </Grid>
+            <Grid item xs={12} sm={6}>
+              <DesktopDatePicker
+                label="Date of Birth"
+                inputFormat="YYYY/MM/DD"
+                value={values.DOB}
+                //@ts-ignore
+                onChange={handleDateChange}
+                renderInput={(params) => <TextField {...params} fullWidth />}
+              />
+            </Grid>
           </LocalizationProvider>
           {
             selectFields.map(field => {
               return (
-                <Grid item xs={6}>
+                <Grid item xs={12} sm={6}>
                   <FormControl fullWidth>
                     <InputLabel id="demo-simple-select-label">{field.label}</InputLabel>
                     <Select

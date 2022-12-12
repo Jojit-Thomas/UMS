@@ -37,8 +37,8 @@ POST http://localhost:4000/api/student/add
 Content-Type: application/json
 
 {
-  "name" : "jojit",
-  "email" : "jojit@gmail.com",
+  "name" : "jojit thomas",
+  "email" : "jojitthomas@gmail.com",
   "phone" : "9900000000",
   "address" : "mallikasseril (H) Kochara P.O. Manthippara",
   "gender" : "MALE",
@@ -102,13 +102,20 @@ POST http://localhost:4000/api/teacher/apply
 Content-Type: application/json
 
 {
-  "name" : "John Doe",
-  "phone" : "9900000000",
-  "password" : "asdfasdf",
-  "subject" : "B.Tech",
-  "qualification" : "phd",
-  "gender" : "MALE",
-  "collegeId" : "LAKEUK"
+    "name": "Christopher Joseph",
+    "address": "alarivattom  P.O. Ernakulam",
+    "email": "christopher@gmail.com",
+    "contact": "9900000000",
+    "totalMark": "81",
+    "collegeId": "HADUK",
+    "subject": "B.Tech",
+    "gender": "MALE",
+    "markListLink": "http://s3bucket.com/tempeuniversity  ",
+    "qualification": "HighSchool",
+    "DOB": "2022-12-12T07:16:56.143Z",
+    "password": "asdfasdf",
+    "skills": "Code,Speak",
+    "experience": "0-6 Months"
 }
 
 ###

@@ -7,17 +7,20 @@ export interface Teacher {
   _id : Types.ObjectId,
   name : string,
   email : string,
-  phone : string,
+  address : string,
+  contact : string,
   password : string,
-  subject : Types.ObjectId,
+  subject : string,
   classTeacher : Types.ObjectId,
   qualification : string,
-  gender : Gender,
   collegeId : string,
-  isApproved : boolean
+  gender : Gender,
+  isApproved : boolean,
+  DOB : Date,
+  skills : string,
+  totalMark : string,
+  experience : string,
 }
-
-
 
 const teacherSchema = new mongoose.Schema({
   _id : {
@@ -26,7 +29,7 @@ const teacherSchema = new mongoose.Schema({
   },
   name : String,
   email : String,
-  phone : String,
+  contact : String,
   password : String,
   subject : String,
   classTeacher : Types.ObjectId,
@@ -39,7 +42,11 @@ const teacherSchema = new mongoose.Schema({
   isApproved : {
     type : Boolean,
     default : false,
-  }
+  },
+  DOB : Date,
+  skills : String,
+  totalMark : Number,
+  expereience : String,
 }, {_id : false})
 
 export const teacherModel = mongoose.model("teacherModel", teacherSchema, TEACHERS_COLLECTION)

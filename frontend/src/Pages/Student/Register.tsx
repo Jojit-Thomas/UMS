@@ -1,9 +1,9 @@
 import { SelectChangeEvent } from '@mui/material';
 import { stringify } from 'querystring';
-import React, { Fragment, useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import RegisterForm, { Select } from '../../Components/RegisterForm'
-import axios from './axios';
+import RegisterForm, { Fields, Select } from '../../Components/RegisterForm'
+import axios from '../College/axios';
 
 enum Gender {
   NOT_SELECTED,
@@ -33,16 +33,7 @@ export interface Values {
 function Register() {
   const navigate = useNavigate()
   const [college, setCollege] = useState([])
-  useEffect(() => {
-    axios.get("/college/list").then((res) => {
-      //@ts-ignore
-      const data = [...res.data.map(elem => {
-        return { value: elem.collegeId, label: elem.name, course: elem.course };
-      })]
-      //@ts-ignore
-      setCollege(data)
-    })
-  }, [])
+
 
 
   const defaultFormValues = {
@@ -72,6 +63,40 @@ function Register() {
     educationalQualification: "",
     DOB: new Date(),
   }
+
+
+  const [fields, setFields] = useState<Fields[]>([
+    {
+      id: 1,
+      name: "name",
+      label: "Full Name",
+      error: "",
+    },
+    {
+      id: 2,
+      name: "email",
+      label: "Email Address",
+      error: "",
+    },
+    {
+      id: 3,
+      name: "contact",
+      label: "Contact No",
+      error: "",
+    },
+    {
+      id: 5,
+      name: "totalMark",
+      label: "Total Marks",
+      error: "",
+    },
+    {
+      id: 7,
+      name: "password",
+      label: "Password",
+      error: "",
+    },
+  ]);
 
 
   const [values, setValues] = useState<Values>(defaultFormValues);
@@ -116,54 +141,20 @@ function Register() {
     console.log(college[0].course)
   };
 
-  const handleSubmit = (): void => {
-    axios
-      .post("/student/admission/apply ", values)
-      .then((result) => {
-        console.log("success : ", result);  
-        navigate('/')
-      })
-      .catch((error) => {
-        console.log(error)
-        console.error("error : ", error.response.data);
-        setError(error.response.data)
-      });
-  };
-
- 
-
-  const fields = [
-    {
-      id: 1,
-      name: "name",
-      label: "Full Name",
-    },
-    {
-      id: 2,
-      name: "email",
-      label: "Email Address",
-    },
-    {
-      id: 3,
-      name: "contact",
-      label: "Contact No",
-    },
+  useEffect(() => {
+    axios.get("/college/list").then((res) => {
+      //@ts-ignore
+      const data = [...res.data.map(elem => {
+        return { value: elem.collegeId, label: elem.name, course: elem.course };
+      })]
+      //@ts-ignore
+      setCollege(data)
+    })
+  }, [])
 
 
-    {
-      id: 5,
-      name: "totalMark",
-      label: "Total Marks",
-    },
-    {
-      id: 7,
-      name: "password",
-      label: "Password",
-    },
 
-  ]
-
-  const selectFields: Array<Select> = [
+  const [selectFields, setSelectFields] = useState<Select[]>([
     {
       id: 4,
       name: "gender",
@@ -198,7 +189,7 @@ function Register() {
       id: 8,
       name: "1preferredSubject",
       label: "1st Preffered Subject",
-      options: college ? (values.admissionPreference[0].collegeId !== "") ? // If college is recieved and the college is selected
+      options: college ? (values?.admissionPreference[0].collegeId !== "") ? // If college is recieved and the college is selected
         //@ts-ignore
         college.find(x => x.value === values.admissionPreference[0].collegeId).course.map(course => {
           return { value: course.ref, label: course.ref };
@@ -236,7 +227,47 @@ function Register() {
           return { value: course.ref, label: course.ref };
         }) : [] : []
     },
-  ]
+  ])
+
+
+  const handleSubmit = (): void => {
+    axios
+      .post("/student/admission/apply ", values)
+      .then((result) => {
+        console.log("success : ", result);
+        navigate('/')
+      })
+      .catch((error) => {
+        console.log(error)
+        // console.error("error : ", error.response.data);
+        setError(error.response.data.message)
+        JSON.parse(error.response.data.message).forEach((err: any) => {
+          fields.find((x, idx) => {
+            if (x.name === err.path[0]) {
+              const fieldsDuplicate = [...fields]
+              fieldsDuplicate[idx].error = err.message;
+              //@ts-ignore
+              setFields(fieldsDuplicate)
+              console.log(fieldsDuplicate)
+              return x;
+            }
+          });
+          selectFields.find((x, idx) => {
+            if (x.name === err.path[0]) {
+
+            }
+            else if (x.name === err.path[0]) {
+              const fieldsDuplicate = [...fields]
+              fieldsDuplicate[idx].error = err.message;
+              //@ts-ignore
+              setFields(fieldsDuplicate)
+              console.log(fieldsDuplicate)
+              return x;
+            }
+          });
+        });
+      });
+  };
 
   return <Fragment>
     <RegisterForm handleChange={handleChange} handleClear={handleClear} handleDateChange={handleDateChange} values={values} handleSelectChange={handleSelectChange} handleSubmit={handleSubmit} error={error} fields={fields} selectFields={selectFields} />

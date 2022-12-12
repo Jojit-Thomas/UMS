@@ -7,6 +7,7 @@ import { Student } from "../models/student_model";
 import { studentApplicationFormType } from "../models/student_application_model";
 import { College } from "../models/college_model";
 import { Teacher } from "../models/teacher_model";
+import { join } from "path";
 
 
 const studentSchema = Joi.object({
@@ -36,7 +37,7 @@ const studentApplicationFormSchema = Joi.object({
   }).required(),
   educationalQualification : Joi.string().required(),
   password : Joi.string().min(8).max(40).required(),
-  contact : Joi.string().min(10).max(10).required(),
+  contact : Joi.string().pattern(/^[0-9]+$/).min(10).max(10).required(),
   address : Joi.string().trim().min(10).max(100).required(),
   totalMark : Joi.number().required(),
   admissionPreference : Joi.array().required(),
@@ -67,13 +68,19 @@ const teacherSchema = Joi.object({
     maxDomainSegments : 4,
     tlds: { allow: ["com", "net"] },
   }),
-  phone : Joi.string().min(10).max(10).required(),
+  contact : Joi.string().min(10).max(10).required(),
   password : Joi.string().min(8).max(30).required(),
   subject : Joi.string().required(),
   classTeacher : Joi.string(),
   qualification : Joi.string().required(),
   gender : Joi.string().valid('MALE','FEMALE').required(),
-  collegeId : Joi.string().required()
+  collegeId : Joi.string().required(),
+  address : Joi.string().min(5).max(100).required(),
+  totalMark : Joi.number().required(),
+  markListLink : Joi.string().required(),
+  DOB : Joi.string().required(),
+  skills : Joi.string().required(),
+  experience : Joi.string().required(),
 })
 
 

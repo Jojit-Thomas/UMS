@@ -19,7 +19,6 @@ const createStudentAllotment: RequestHandler = async (req, res, next) => {
     console.log(req.body)
     await validation.isStudentApllicationFormValid(req.body)
     req.body.DOB = moment(req.body.DOB)
-    console.log("myr date : ",req.body.DOB)
     await studentDB.createStudentAllotment(req.body)
     res.sendStatus(204)
   } catch (err: any) {
