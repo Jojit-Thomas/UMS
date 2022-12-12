@@ -5,11 +5,6 @@ declare global {
       user: Object;
       universtiy : Object;
     }
-    interface Request {
-      cookies : {
-        adminAccessToken : String,
-        
-      }
     }
   }
   interface Error {

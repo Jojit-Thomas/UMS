@@ -1,15 +1,34 @@
-POST http://localhost:4000/api/admission/apply 
+POST http://localhost:4000/api/student/admission/apply 
 Content-Type: application/json
 
 {
-  "name" : "jojit",
-  "email" : "jojit@gmail.com",
-  "address" : "mallikasseril (H) Kochara P.O. Manthippara",
-  "gender" : "MALE",
-  "totalMark" : 50,
-  "markListLink" : "http://s3bucketlink",
-  "admissionPreference" : [{"collegeId" : "LAKEUK","course" : "507f191e810c19729de860ea" }],
-  "DOB": "10/10/2020"
+    "name": "Jojit",
+    "address": "Mallikasseril (H) Kochara P.O. Manthippar",
+    "email": "jojitthomas.info@gmail.com",
+    "contact": "9947337790",
+    "totalMark": "81",
+    "admissionPreference": [
+        {
+            "preference": 1,
+            "collegeId": "HADUK",
+            "course": "B.Tech"
+        },
+        {
+            "preference": 2,  
+            "collegeId": "LAKEUK",
+            "course": "B.Arch"
+        },
+        {
+            "preference": 3,
+            "collegeId": "HADUK",
+            "course": "B.Tech"
+        }
+    ],
+    "gender": "MALE",
+    "markListLink": "http://s3bucket.com/tempeuniversity",
+    "educationalQualification": "HighSchool",
+    "DOB": "2006-01-17",
+    "password": "asdfasdf"
 }
 
 ###
@@ -33,7 +52,6 @@ Content-Type: application/json
 ###
 
 POST http://localhost:4000/api/auth/university/login
-Cookie: adminAccessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NzA2NTU5MjksImV4cCI6MTY3MDc0MjMyOX0._nxF9e3v8-QXqlrMkXcHzEX2m6fypYSgcNCANxZEFdA; Max-Age=86400; Path=/; Expires=Sun, 11 Dec 2022 07:05:29 GMT
 Content-Type: application/json
 
 {
@@ -44,7 +62,7 @@ Content-Type: application/json
 
 ### 
 
-GET http://localhost:4000/api/students
+GET http://localhost:4000/api/student/all
 
 ###
 PATCH  http://localhost:4000/api/student/jojit@gmail.com/block
@@ -75,7 +93,7 @@ Content-Type: application/json
   "password" : "asdfasdf",
   "university" : "507f1f77bcf86cd799439011",
   "course" : [
-    {"ref" : "507f1f77bcf86cd799439011", "maxCandidate" : 30}
+    {"ref" : "B.Arch", "maxCandidate" : 30}
   ]
 }
 ###
@@ -104,3 +122,21 @@ Content-Type: application/json
 
 ###
 
+GET http://localhost:4000/api/university/
+Authorization: eyJhbGciOiJIUzI1NiIsIn5cCI6IkpXVCJ9.eyJpYXQiOjE2NzA2OTU1ODcsImV4cCI6MTY3MDc4MTk4N30.h6XG9MCSQqx1cFfJ5jTwMD0L9BKZvz5SQ36LeBBA26o
+
+###
+
+GET http://localhost:4000/api/college/list
+
+###
+
+PATCH  http://localhost:4000/api/college/approval/invert 
+Content-Type: application/json  
+
+{
+  "collegeId" : "LAKEUK"
+}
+
+###
+POST http://localhost:4000/api/student/admission/pay

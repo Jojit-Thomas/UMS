@@ -6,10 +6,10 @@ export interface College {
   name : string,
   email : string,
   collegeId : string,
-  Password : string,
-  Place : string,
-  University : string,
-  Course : [{
+  password : string,
+  place : string,
+  university : string,
+  course : [{
     ref : Types.ObjectId,
     maxCandidate : Number, 
   }],
@@ -30,8 +30,8 @@ const collegeSchema = new mongoose.Schema({
   password : String,
   place : String,
   university : Types.ObjectId,
-  Course : [{
-    ref : Types.ObjectId,
+  course : [{
+    ref : String,
     maxCandidate : Number
   }],
   isApproved : {

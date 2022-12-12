@@ -1,5 +1,5 @@
-import axios from '../../axios';
-import React, { Fragment, useState } from 'react'
+import axios from './axios';
+import { Fragment, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import LoginComponent from "../../Components/LoginComponent"
 

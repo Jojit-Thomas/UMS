@@ -33,8 +33,9 @@ export const verifyStudent: RequestHandler = (req, res, next) => {
 
 export const verifyUniversity: RequestHandler = (req, res, next) => {
   try {
+    console.log("hey")
     if (!process.env.JWT_ADMIN_ACCESS_TOKEN) throw new Error("Jwt access token is not provided in env")
-    const accessToken = req.cookies.adminAccessToken;
+    const accessToken = req.headers.authorization;
     if (!accessToken) throw ({ status: 401, message: "Unauthorized" })
     const user = jwt.verify(accessToken, process.env.JWT_ADMIN_ACCESS_TOKEN)
     console.log("```user``` : ", user)
@@ -55,26 +56,3 @@ export const verifyUniversity: RequestHandler = (req, res, next) => {
   }
 }
 
-
-
-const refreshToken = async (cookies : ) => {
-  if (!process.env.JWT_REFRESH_TOKEN) throw new Error("Jwt refresh token is not provided in env")
-  if (!process.env.JWT_ACCESS_TOKEN) throw new Error("Jwt access token is not provided in env")
-  let { refreshToken } = cookies;
-  if (!refreshToken) throw createHttpError.Unauthorized();
-  let user = jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN)
-  console.log("user : ", user)
-  let refreshTokenDb = await client.GET(user.aud)
-  console.log("refresh token : ", refreshTokenDb)
-  // if  (refreshTokenDb === null) throw createHttpError.Unauthorized()
-
-  if (refreshTokenDb === refreshToken) {
-    let accessToken = jwt.sign({ name: user.name }, process.env.JWT_ACCESS_TOKEN, { expiresIn: "24h", audience: user.aud });
-    let refreshToken = jwt.sign({ name: user.name }, process.env.JWT_REFRESH_TOKEN, { expiresIn: "180d", audience: user.aud });
-    client.SET(user.aud, refreshToken, { EX: 180 * 24 * 60 * 60 })
-    // res.status(200).json({ accessToken, refreshToken })
-
-  } else {
-    // (async () => await client.DEL(user.aud))()
-  }
-}

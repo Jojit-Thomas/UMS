@@ -6,7 +6,7 @@ const createSubject: RequestHandler = async (req, res, next) => {
     await subjectDB.createSubject(req.body)
     res.sendStatus(204)
   } catch(err : any) {
-    res.status(err.status || 500).json(JSON.parse(err.message) || "Internal Server Error")
+    res.status(err.status || 500).json(err.message || "Internal Server Error")
   }
 }
 

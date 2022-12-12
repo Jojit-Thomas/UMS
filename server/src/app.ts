@@ -6,7 +6,7 @@ import createError from "http-errors";
 import cookieParser from "cookie-parser";
 import express, { ErrorRequestHandler } from "express";
 import authRouter from "./routes/auth";
-import studentRouter from "./routes/index";
+import studentRouter from "./routes/student";
 import collegeRouter from "./routes/college";
 import teacherRouter from "./routes/teacher";
 import unviersityRouter from "./routes/university";
@@ -46,14 +46,14 @@ process.on("SIGINT", () => {
 const app = express();
 
 
-app.use(cors({origin: "http://localhost:3000", credentials : true}));
+app.use(cors({origin: "http://localhost:3000"}));
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 // app.use(express.static(path.join(__dirname, 'public')));
 
-app.use("/api", studentRouter);
+app.use("/api/student", studentRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/college", collegeRouter);
 app.use("/api/university", unviersityRouter);

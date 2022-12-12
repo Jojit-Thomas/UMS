@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "ts-node ./src/bin/www",
+    "start": "nodemon ./build/bin/www",
     "build": "tsc",
     "dev": "node ./src/bin/www.ts"
   },
@@ -15,10 +15,14 @@
     "dotenv": "^16.0.3",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
+    "i": "^0.3.7",
     "joi": "^17.7.0",
     "jsonwebtoken": "^8.5.1",
+    "moment": "^2.29.4",
     "mongoose": "^6.7.2",
     "morgan": "~1.9.1",
+    "npm": "^9.2.0",
+    "razorpay": "^2.8.4",
     "redis": "^4.5.0"
   },
   "devDependencies": {

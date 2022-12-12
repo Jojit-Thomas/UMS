@@ -4,6 +4,7 @@ import { Gender } from "./typescript"
 
 
 interface admissionPreferenceType {
+  preference : number,
   collegeId: string,
   course: string
 }
@@ -14,11 +15,13 @@ export interface studentApplicationFormType {
   address: string,
   email: string,
   totalMark: Number,
-  phone: string,
+  contact: string,
   admissionPreference: [admissionPreferenceType],
   gender: Gender,
   markListLink: string,
-  DOB: Date
+  DOB: Date,
+  educationalQualification : string,
+  password : string,
 }
 
 
@@ -31,8 +34,9 @@ const studentApplicationSchema = new mongoose.Schema({
   address: String,
   email: String,
   totalMark: Number,
-  phone: String,
+  contact: String,
   admissionPreference: [{
+    preference: Number,
     collegeId: String,
     course: String
   }],
@@ -42,6 +46,8 @@ const studentApplicationSchema = new mongoose.Schema({
   },
   markListLink: String,
   DOB: Date,
+  educationalQualification : String,
+  password : String,
 }, { _id: false })
 
 

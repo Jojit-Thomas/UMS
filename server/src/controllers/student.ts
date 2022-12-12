@@ -1,14 +1,25 @@
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
+import moment from "moment";
 
 import studentDB from "../services/student"
 import validation from "../services/validation";
+import Razorpay from "razorpay"
+import dotenv from "dotenv"
+dotenv.config();
+
+var instance = new Razorpay({
+  key_id: 'rzp_test_8JLZOZRODQ9Mpc',
+  key_secret: process.env.RAZOR_PAY_SECRET,
+});
+
 
 const createStudentAllotment: RequestHandler = async (req, res, next) => {
   try {
     console.log(req.body)
-    
     await validation.isStudentApllicationFormValid(req.body)
+    req.body.DOB = moment(req.body.DOB)
+    console.log("myr date : ",req.body.DOB)
     await studentDB.createStudentAllotment(req.body)
     res.sendStatus(204)
   } catch (err: any) {
@@ -61,4 +72,21 @@ const getAStudent: RequestHandler = async (req, res, next) => {
   }
 }
 
-export default { createStudentAllotment, createStudent, allStudents, blockStudent, getAStudent }
+const admissionPayment: RequestHandler = async (req, res, next) => {
+  try{
+    var options = {
+      amount: 5000,  // amount in the smallest currency unit
+      currency: "INR",
+      receipt: `order_${Date.now()}_${Math.random()}`
+    };
+    instance.orders.create(options, function(err: any, order: any) {
+      console.log(err)
+      if(err) throw createHttpError.InternalServerError()
+      res.status(200).json(order)
+    });
+  } catch (err: any) {
+    res.status(err.status || 500).json(err.message || "Internal server error")
+  }
+}
+
+export default { createStudentAllotment, createStudent, allStudents, blockStudent, getAStudent, admissionPayment }

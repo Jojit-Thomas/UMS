@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+import createHttpError from "http-errors";
 import collegeDB from "../services/college";
 import validation from "../services/validation";
 
@@ -14,5 +15,25 @@ const createCollege: RequestHandler = async (req, res, next) => {
   }
 }
 
+const fetchApprovedCollege: RequestHandler = async (req, res, next) => {
+  try{
+    let colleges = await collegeDB.fetchApprovedCollege()
+    res.status(200).json(colleges)
+  } catch(err: any) {
+    console.log(err)
+    res.status(err.status || 500).json(err.message)
+  }
+}
 
-export default {createCollege}
+const inverteApproval: RequestHandler = async (req, res, next) => {
+  try{
+    if(!req.body.collegeId) throw createHttpError.BadRequest("collegeId is required : body")
+    await collegeDB.invertApproval(req.body.collegeId)
+    res.sendStatus(204)
+  } catch(err: any) {
+    res.status(err.status || 500).json(err.message)
+  }
+}
+
+
+export default {createCollege, fetchApprovedCollege, inverteApproval  }

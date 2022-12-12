@@ -72,7 +72,7 @@ const refreshAccessToken: RequestHandler = async (req, res, next) => {
       // (async () => await client.DEL(user.aud))()
       res.status(401).json("Unauthorized")
     }
-  } catch (err) {
+  } catch (err: any) {
     console.table(err)
     if (err.name === "JsonWebTokenError") {
       res.status(401).json("Unauthroized")
@@ -100,8 +100,7 @@ const universityLogin: RequestHandler = (req, res) => {
     if (!process.env.JWT_ADMIN_ACCESS_TOKEN) throw new Error("Jwt Admin Access token is not provided")
     if (req.body.email === process.env.ADMIN_EMAIL && req.body.password === process.env.ADMIN_PASSWORD) {
       const adminAccessToken = jwt.sign({}, process.env.JWT_ADMIN_ACCESS_TOKEN, { expiresIn: "24h" })
-      res.cookie("adminAccessToken", adminAccessToken, {maxAge : 24 * 60 * 60 * 1000})
-      res.sendStatus(204)
+      res.status(200).json({ adminAccessToken: adminAccessToken })
     } else {
       res.status(401).json("Email or Password is wrong")
     }
