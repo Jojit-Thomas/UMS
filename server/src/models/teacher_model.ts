@@ -27,7 +27,10 @@ const teacherSchema = new mongoose.Schema({
     type : Types.ObjectId,
     default : new Types.ObjectId
   },
-  name : String,
+  name : {
+    type : String,
+    unique : true,
+  },
   email : String,
   contact : String,
   password : String,

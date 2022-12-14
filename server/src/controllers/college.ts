@@ -9,7 +9,6 @@ const createCollege: RequestHandler = async (req, res, next) => {
   try {
     await validation.isCollegeSchemaValid(req.body)
     req.body.isApproved = false;
-    req.body.DOB = moment(req.body.DOB)
     await collegeDB.createCollege(req.body)
     res.sendStatus(204)
   } catch (err: any) {

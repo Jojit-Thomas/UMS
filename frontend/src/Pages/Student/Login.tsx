@@ -23,10 +23,12 @@ function Login() {
   const handleSubmit = (): void => {
     console.log(values);
     axios
-      .post("/auth/university/login", values)
+      .post("/auth/student/login", values)
       .then((result) => {
         console.log("success : ", result);
-        localStorage.setItem("adminAccessToken", result.data.adminAccessToken);
+        localStorage.setItem("studentAccessToken", result.data.accessToken);
+        localStorage.setItem("studentRefreshToken", result.data.refreshToken);
+        localStorage.setItem("studentName", result.data.user);
         navigate('/')
       })
       .catch((error) => {

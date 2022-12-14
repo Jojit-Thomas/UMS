@@ -17,8 +17,8 @@ const studentLogin: RequestHandler = async (req, res, next) => {
   try {
     if (!process.env.JWT_ACCESS_TOKEN) throw new Error("Jwt access token is not provided in env")
     if (!process.env.JWT_REFRESH_TOKEN) throw new Error("Jwt refresh token is not provided in env")
-    const {email, password} = req.body
-    if(!email || !password) throw createHttpError.BadRequest("Email and Password is required")
+    const { email, password } = req.body
+    if (!email || !password) throw createHttpError.BadRequest("Email and Password is required")
     let user: any = await studentDB.fetchAStudentDetails(email)
     let isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw ({ status: 401, message: "Email or password is wrong" });

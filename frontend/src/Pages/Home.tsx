@@ -12,6 +12,7 @@ function Home() {
       <Anchor to="/university">University</Anchor>
       <Anchor to="/University/login">University/login</Anchor>
       <Anchor to="/student">student</Anchor>
+      <Anchor to="/student/login">student/login</Anchor>
       <Anchor to="/student/register">student/register</Anchor>
       <Anchor to="/teacher">teacher</Anchor>
       <Anchor to="/teacher/register">teacher/register</Anchor>

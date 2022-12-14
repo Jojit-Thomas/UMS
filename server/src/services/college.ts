@@ -5,7 +5,11 @@ const createCollege = (body: College): Promise<void> => {
   return new Promise((resolve, reject) => {
     collegeModel.create(body).then(() => resolve()).catch((err) => {
       console.error(err);
-      reject(createHttpError.InternalServerError())
+      if (err.code === 11000) {
+        reject(createHttpError.Conflict("College ID needs to be unique"))
+      } else {
+        reject(createHttpError.InternalServerError())
+      }
     })
   })
 }
@@ -28,7 +32,7 @@ const invertApproval = (collegeId: string): Promise<void> => {
       resolve();
     } catch (err: any) {
       console.log(err);
-      if(err.status === 404) {
+      if (err.status === 404) {
         reject(createHttpError.NotFound("CollegeId is invalid"))
       } else {
         reject(createHttpError.InternalServerError());

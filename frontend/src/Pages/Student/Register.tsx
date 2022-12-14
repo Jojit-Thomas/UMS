@@ -268,9 +268,13 @@ function Register() {
         });
       });
   };
+  const date = {
+    label: "Date of Birth",
+    name: "DOB"
+  }
 
   return <Fragment>
-    <RegisterForm handleChange={handleChange} handleClear={handleClear} handleDateChange={handleDateChange} values={values} handleSelectChange={handleSelectChange} handleSubmit={handleSubmit} error={error} fields={fields} selectFields={selectFields} />
+    <RegisterForm submit='Pay now' date={date} handleChange={handleChange} handleClear={handleClear} handleDateChange={handleDateChange} values={values} handleSelectChange={handleSelectChange} handleSubmit={handleSubmit} error={error} fields={fields} selectFields={selectFields} />
   </Fragment>
 }
 

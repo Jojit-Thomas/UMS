@@ -18,7 +18,7 @@ export interface Values {
   email: string,
   totalMark: Number,
   contact: string,
-  collegeId : string,
+  collegeId: string,
   subject: string,
   gender: Gender,
   markListLink: string,
@@ -26,7 +26,7 @@ export interface Values {
   password: string,
   skills: string,
   experience: string,
-  qualification : string,
+  qualification: string,
 }
 
 function Register() {
@@ -44,13 +44,13 @@ function Register() {
   }, [])
 
 
-  const defaultFormValues : Values = {
+  const defaultFormValues: Values = {
     name: "",
     address: "",
     email: "",
     contact: "",
     totalMark: 0,
-    collegeId : "",
+    collegeId: "",
     subject: "",
     gender: Gender.NOT_SELECTED,
     markListLink: "http://s3bucket.com/tempeuniversity  ",
@@ -205,9 +205,13 @@ function Register() {
         }) : [] : []
     }
   ]
+  const date = {
+    label: "Date of Birth",
+    name: "DOB"
+  }
 
   return <Fragment>
-    <RegisterForm handleChange={handleChange} handleClear={handleClear} handleDateChange={handleDateChange} values={values} handleSelectChange={handleSelectChange} handleSubmit={handleSubmit} error={error} fields={fields} selectFields={selectFields} />
+    <RegisterForm date={date} handleChange={handleChange} handleClear={handleClear} handleDateChange={handleDateChange} values={values} handleSelectChange={handleSelectChange} handleSubmit={handleSubmit} error={error} fields={fields} selectFields={selectFields} />
   </Fragment>
 }
 

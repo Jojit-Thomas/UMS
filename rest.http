@@ -62,14 +62,14 @@ Content-Type: application/json
 
 ### 
 
-GET http://localhost:4000/api/student/all
+GET http://localhost:4000/api/college/student/all
 
 ###
-PATCH  http://localhost:4000/api/student/jojit@gmail.com/block
+PATCH  http://localhost:4000/api/college/student/jojitthomas@gmail.com/block
 
 ###
 
-GET http://localhost:4000/api/student/jojit@gmail.com
+GET http://localhost:4000/api/college/student/jojitthomas@gmail.com
 
 ###
 
@@ -77,7 +77,7 @@ POST http://localhost:4000/api/auth/student/login
 Content-Type: application/json
 
 {
-  "email" : "jojit@gmail.com",
+  "email" : "jojitthomas@gmail.com",
   "password" : "asdfasdf"
 }
 
@@ -87,14 +87,25 @@ POST http://localhost:4000/api/college/apply
 Content-Type: application/json
 
 {
-  "name" : "Lakedown College",
-  "collegeId" : "LAKEUK",
-  "place" : "United Kingdom",
-  "password" : "asdfasdf",
-  "university" : "507f1f77bcf86cd799439011",
-  "course" : [
-    {"ref" : "B.Arch", "maxCandidate" : 30}
-  ]
+    "name": "Chicken College",
+    "address": "Chicken Square, Kottayam, Kerala",
+    "email": "chicken@gmail.com",
+    "contact": "9900000000",
+    "password": "asdfasdf",
+    "collegeId" : "CHCKOT",
+    "place" : "Kottayam",
+    "course": [
+        {
+            "id": 0,
+            "ref": "B.Tech",
+            "maxCandidate": 10
+        },
+        {
+            "id": 1,
+            "ref": "BBA",
+            "maxCandidate": 100
+        }
+    ]
 }
 ###
 
@@ -124,7 +135,7 @@ POST http://localhost:4000/api/university/subject/add
 Content-Type: application/json
 
 {
-  "name" : "B.Tech"
+  "name" : "Maths"
 }
 
 ###
@@ -147,3 +158,17 @@ Content-Type: application/json
 
 ###
 POST http://localhost:4000/api/student/admission/pay
+
+###
+
+POST http://localhost:4000/api/university/department/add
+Content-Type: application/json
+
+{
+  "name" : "BBA",
+  "qualification" : "High School",
+  "semesters" : [{"sem" : 1, "subjects" : ["Maths", "English"]}]
+}
+
+###
+GET http://localhost:4000/api/college/department/all

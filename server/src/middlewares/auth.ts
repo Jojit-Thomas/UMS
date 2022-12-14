@@ -8,7 +8,7 @@ import createHttpError from "http-errors";
 const client = connectRedis();
 
 
-export const verifyStudent: RequestHandler = (req, res, next) => {
+const verifyStudent: RequestHandler = (req, res, next) => {
   try {
     if (!process.env.JWT_ACCESS_TOKEN) throw new Error("Jwt access token is not provided in env")
     if (!req.headers.authorization) throw ({ status: 401, message: "Unauthorized" })
@@ -31,7 +31,7 @@ export const verifyStudent: RequestHandler = (req, res, next) => {
 
 
 
-export const verifyUniversity: RequestHandler = (req, res, next) => {
+const verifyUniversity: RequestHandler = (req, res, next) => {
   try {
     console.log("hey")
     if (!process.env.JWT_ADMIN_ACCESS_TOKEN) throw new Error("Jwt access token is not provided in env")
@@ -56,3 +56,4 @@ export const verifyUniversity: RequestHandler = (req, res, next) => {
   }
 }
 
+export default { verifyStudent, verifyUniversity }

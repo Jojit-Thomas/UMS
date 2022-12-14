@@ -5,64 +5,44 @@ import { useNavigate } from 'react-router-dom';
 import RegisterForm, { Select } from '../../Components/RegisterForm'
 import axios from './axios';
 
-enum Gender {
-  NOT_SELECTED,
-  MALE,
-  FEMALE
+interface course {
+  id: number,
+  ref: string,
+  maxCandidate: Number,
 }
 
-
-export interface Values {
+export interface College {
   name: string,
-  address: string,
   email: string,
-  totalMark: Number,
-  contact: string,
-  collegeId : string,
-  subject: string,
-  gender: Gender,
-  markListLink: string,
-  DOB: Date,
   password: string,
-  skills: string,
-  experience: string,
-  qualification : string,
+  contact: string,
+  address: string,
+  course: course[],
+  collegeId: string,
+  place: string
 }
+
+let fieldCount = 0;
 
 function Register() {
   const navigate = useNavigate()
-  const [college, setCollege] = useState([])
-  useEffect(() => {
-    axios.get("/college/list").then((res) => {
-      //@ts-ignore
-      const data = [...res.data.map(elem => {
-        return { value: elem.collegeId, label: elem.name, course: elem.course };
-      })]
-      //@ts-ignore
-      setCollege(data)
-    })
-  }, [])
+  const [department, setDepartment] = useState([])
 
 
-  const defaultFormValues : Values = {
+
+  const defaultFormValues: College = {
     name: "",
     address: "",
     email: "",
     contact: "",
-    totalMark: 0,
-    collegeId : "",
-    subject: "",
-    gender: Gender.NOT_SELECTED,
-    markListLink: "http://s3bucket.com/tempeuniversity  ",
-    qualification: "",
-    DOB: new Date(),
     password: "",
-    skills: "",
-    experience: ""
+    collegeId: "",
+    place: "",
+    course: [],
   }
 
 
-  const [values, setValues] = useState<Values>(defaultFormValues);
+  const [values, setValues] = useState<College>(defaultFormValues);
 
   const handleClear = (): void => {
     console.log("handleclear")
@@ -75,20 +55,33 @@ function Register() {
     setValues({ ...values, [e.target.name]: e.target.value });
   };
 
-  const handleDateChange = (date: any): void => {
-    console.log(date)
-    setValues({ ...values, ["DOB"]: date });
-  }
-
   const handleSelectChange = (e: SelectChangeEvent): void => {
-    setValues({ ...values, [e.target.name]: e.target.value });
+    console.log(e.target.name, e.target.value)
+    const preference = parseInt(e.target.name.slice(0, 1))
+    if (e.target.name.substring(1) === "collegeId") {
+      let courseObj = { id: preference, ref: e.target.value, maxCandidate: 0 }
+      let temp = values;
+      //@ts-ignore
+      temp.course.push(courseObj)
+      setValues({ ...temp })
+    } else if (e.target.name.substring(1) === "maxCandidate") {
+      let temp = values;
+      console.log(preference)
+      //@ts-ignore
+      temp.course[preference].maxCandidate = e.target.value
+      setValues({ ...temp })
+    }
+    else {
+      setValues({ ...values, [e.target.name]: e.target.value });
+    }
     console.log(values)
     //@ts-ignore
   };
 
   const handleSubmit = (): void => {
+    console.log(values)
     axios
-      .post("/teacher/apply ", values)
+      .post("/college/apply ", values)
       .then((result) => {
         console.log("success : ", result);
         navigate('/')
@@ -125,89 +118,139 @@ function Register() {
     },
     {
       id: 7,
-      name: "skills",
-      label: "Skills",
-    },
-    {
-      id: 5,
-      name: "totalMark",
-      label: "Total Marks",
-    },
-
-  ]
-
-  const selectFields: Array<Select> = [
-    {
-      id: 4,
-      name: "gender",
-      label: "Gender",
-      options: [
-        { value: "MALE", label: "Male" },
-        { value: "FEMALE", label: "Female" }
-      ]
-    },
-    {
-      id: 7,
-      name: "qualification",
-      label: "Educational Qualification",
-      options: [
-        {
-          value: "HighSchool",
-          label: "High School"
-        },
-        {
-          value: "BachelorDegree",
-          label: "Bachelor Degree"
-        }
-      ]
-    },
-    {
-      id: 8,
-      name: "experience",
-      label: "Experience",
-      options: [
-        {
-          value: '0-6 Months',
-          label: '0-6 Months'
-        },
-        {
-          value: '1 Year',
-          label: '1 Year'
-        },
-        {
-          value: '3 Year',
-          label: '3 Year'
-        },
-        {
-          value: '5 Year',
-          label: '5 Year'
-        },
-        {
-          value: 'More than 5 year',
-          label: 'More than 5 Year'
-        },
-      ]
+      name: "place",
+      label: "Place",
     },
     {
       id: 7,
       name: "collegeId",
-      label: "College",
-      options: [...college]
+      label: "College Id",
     },
-    {
-      id: 8,
-      name: "subject",
-      label: "Subjects",
-      options: college ? (values.collegeId !== "") ? // If college is recieved and the college is selected
-        //@ts-ignore
-        college.find(x => x.value === values.college).course.map(course => {
-          return { value: course.ref, label: course.ref };
-        }) : [] : []
-    }
   ]
 
+  const maxCandidateOption = [{
+    label: 10,
+    value: 10
+  },
+  {
+    label: 50,
+    value: 50
+  },
+  {
+    label: 100,
+    value: 100
+  },
+  {
+    label: 200,
+    value: 200
+  }
+  ]
+
+  useEffect(() => {
+    axios.get("/college/department/all").then((res) => {
+      console.log(res)
+      //@ts-ignore
+      const data = [...res.data.map(elem => {
+        return { value: elem.name, label: elem.name };
+      })]
+      //@ts-ignore
+      setDepartment(data)
+    })
+  }, [])
+
+  let [selectFields, setSelectFields] = useState<Select[]>([
+    {
+      id: 0,
+      width: 0,
+      name: "",
+      label: "",
+      options: []
+    }
+  ])
+
+  const departmentModelObj = {
+    id: 0,
+    width: 8,
+    name: "0collegeId",
+    label: "Department",
+    options: department.filter(department => {
+      //@ts-ignore
+      return !values.course.some(course => course.ref === department.value);
+    })
+  }
+
+  const maxCandidateModelObj = {
+    id: 0,
+    width: 4,
+    name: "0maxCandidate",
+    label: "Max Students",
+    options: maxCandidateOption
+  }
+
+  useEffect(() => {
+    setSelectFields([
+      departmentModelObj,
+      maxCandidateModelObj
+    ])
+  }, [department])
+
+
+  const handleAddDepartment = (e: React.MouseEvent<HTMLElement>): void => {
+    ++fieldCount;
+    console.log(fieldCount)
+    let lastElem = selectFields.length - 1;
+    const departmentField = departmentModelObj
+    const maxCandidate = maxCandidateModelObj
+    departmentField.id = ++lastElem;
+    departmentField.name = fieldCount.toString().concat(departmentField.name.substring(1))
+    maxCandidate.id = ++lastElem;
+    maxCandidate.name = fieldCount.toString().concat(maxCandidate.name.substring(1))
+    setSelectFields([...selectFields, departmentField, maxCandidate])
+  }
+
+  const handleRemove = (e: React.MouseEvent<HTMLElement>): void => {
+    const temp = selectFields
+    console.log(temp)
+    temp.pop();
+    temp.pop();
+    console.log(temp)
+    console.log(values)
+    const prevValues = values;
+    console.log(fieldCount, prevValues.course.length - 1)
+    if (fieldCount === prevValues.course.length - 1) {
+      console.log("deleting the values")
+      prevValues.course.pop()
+    }
+    setValues({ ...prevValues })
+    setSelectFields([...temp])
+    --fieldCount;
+  }
+
+
+
+  // useEffect(() => {
+  //   setSelectFields(prevSelectedFields => {
+  //     return prevSelectedFields.map(field => {
+  //       if (field.name.substring(1) === "collegeId") {
+  //         const index = parseInt(field.name.slice(0, 1))
+  //         console.log(index)
+  //         console.log(values)
+  //         return {
+  //           ...field,
+  //           value: values.course[index].ref,
+  //           options: department.filter(department => {
+  //             return !values.course.some(course => course.ref === department.value);
+  //           })
+  //         }
+  //       } else {
+  //         return field;
+  //       }
+  //     })
+  //   })
+  // }, [values])
+
   return <Fragment>
-    <RegisterForm handleChange={handleChange} handleClear={handleClear} handleDateChange={handleDateChange} values={values} handleSelectChange={handleSelectChange} handleSubmit={handleSubmit} error={error} fields={fields} selectFields={selectFields} />
+    <RegisterForm handleAddDepartment={handleAddDepartment} handleRemove={handleRemove} handleChange={handleChange} handleClear={handleClear} values={values} handleSelectChange={handleSelectChange} handleSubmit={handleSubmit} error={error} fields={fields} selectFields={selectFields} />
   </Fragment>
 }
 

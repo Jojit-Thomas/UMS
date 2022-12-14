@@ -2,18 +2,14 @@ import mongoose, { Types } from "mongoose"
 import { SUBJECTS_COLLECTION } from "../constants/constants"
 
 export interface Subject {
-  name : string,
-  teacher ?: Types.ObjectId
+  name: string,
+  teacher?: Types.ObjectId
 }
 
 const subjectSchema = new mongoose.Schema({
-  name : {
-    type : String,
-    unique : true
-  },
-  teacher : {
-    type : Types.ObjectId,
-    default : new Types.ObjectId("507f191e810c19729de860ea")
+  name: {
+    type: String,
+    unique: true
   }
 })
 

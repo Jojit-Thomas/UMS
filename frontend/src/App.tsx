@@ -3,7 +3,9 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import logo from './logo.svg';
 import Home from './Pages/Home';
 import Index from './Pages/University/Index';
+import StudentIndex from './Pages/Student/Index';
 import Login from './Pages/University/Login';
+import StudentLogin from './Pages/Student/Login';
 import Register from './Pages/Student/Register';
 import TeacherRegister from './Pages/Teacher/Register';
 import CollegeRegister from './Pages/College/Register';
@@ -21,7 +23,8 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route path='/student'>
-          <Route index element={<Index title="Student" />} />
+          <Route index element={<StudentIndex />} />
+          <Route path='login' element={<StudentLogin />} />
           <Route path='register' element={<Register />} />
           <Route path="*" element={<NotFound />} />
         </Route>

@@ -4,4 +4,5 @@ const router = express.Router()
 
 router.post('/apply', teacher.createTeacher)
 
+
 export default router;
