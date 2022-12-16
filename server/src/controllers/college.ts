@@ -22,7 +22,7 @@ const fetchApprovedCollege: RequestHandler = async (req, res, next) => {
     res.status(200).json(colleges)
   } catch (err: any) {
     console.log(err)
-    res.status(err.status || 500).json(err.message)
+    res.status(err.status || 500).json(err.message || "Internal Sever Error")
   }
 }
 
@@ -32,9 +32,17 @@ const inverteApproval: RequestHandler = async (req, res, next) => {
     await collegeDB.invertApproval(req.body.collegeId)
     res.sendStatus(204)
   } catch (err: any) {
-    res.status(err.status || 500).json(err.message)
+    res.status(err.status || 500).json(err.message || "Internal Sever Error")
   }
 }
 
+const fetchAllCollege: RequestHandler = async (req, res, next) => {
+  try{
+    let college = await collegeDB.fetchAllCollege()
+    res.status(200).json(college)
+  }catch(err: any) {
+    res.status(err.status || 500).json(err.message || "Internal Sever Error")    
+  }
+}
 
-export default { createCollege, fetchApprovedCollege, inverteApproval }
+export default { createCollege, fetchApprovedCollege, inverteApproval, fetchAllCollege }

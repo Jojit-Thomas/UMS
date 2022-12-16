@@ -41,4 +41,13 @@ const invertApproval = (collegeId: string): Promise<void> => {
   })
 }
 
-export default { createCollege, fetchApprovedCollege, invertApproval }
+const fetchAllCollege = () => {
+  return new Promise((resolve, reject) => {
+    collegeModel.find().then((colleges) => resolve(colleges)).catch((err) => {
+      console.log(err);
+      reject(createHttpError.InternalServerError());
+    })
+  })
+}
+
+export default { createCollege, fetchApprovedCollege, invertApproval, fetchAllCollege }
