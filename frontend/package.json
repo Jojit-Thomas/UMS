@@ -7,6 +7,7 @@
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.10.16",
     "@mui/material": "^5.10.17",
+    "@mui/x-data-grid": "^5.17.14",
     "@mui/x-date-pickers": "^5.0.10",
     "axios": "^1.2.1",
     "dayjs": "^1.11.7",

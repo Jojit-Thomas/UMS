@@ -2,14 +2,16 @@ import React, { Fragment } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import logo from './logo.svg';
 import Home from './Pages/Home';
-import Index from './Pages/University/Index';
+import Index from './Pages/Index';
 import StudentIndex from './Pages/Student/Index';
 import Login from './Pages/University/Login';
+import UniversityIndex from './Pages/University/Index';
 import StudentLogin from './Pages/Student/Login';
 import Register from './Pages/Student/Register';
 import TeacherRegister from './Pages/Teacher/Register';
 import CollegeRegister from './Pages/College/Register';
 import NotFound from './Pages/NotFound';
+import UniversityCollege from './Pages/University/College';
 
 function App() {
   return <Fragment>
@@ -18,7 +20,8 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/login' element={<Login />} />
         <Route path='/university/*'>
-          <Route index element={<Index title="University" />} />
+          <Route index element={<UniversityIndex />} />
+          <Route path='college' element={<UniversityCollege />} />
           <Route path='login' element={<Login />} />
           <Route path="*" element={<NotFound />} />
         </Route>
@@ -34,7 +37,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route path='/college'>
-          <Route index element={<Index title="Teacher Home Page" />} />
+          <Route index element={<Index title="College Home Page" />} />
           <Route path='register' element={<CollegeRegister />} />
           <Route path="*" element={<NotFound />} />
         </Route>
