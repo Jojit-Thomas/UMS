@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import RegisterForm, { Select } from '../../Components/RegisterForm'
 import axios from './axios';
 
-interface course {
+interface department {
   id: number,
   ref: string,
   maxCandidate: Number,
@@ -17,7 +17,7 @@ export interface College {
   password: string,
   contact: string,
   address: string,
-  course: course[],
+  department: department[],
   collegeId: string,
   place: string
 }
@@ -38,7 +38,7 @@ function Register() {
     password: "",
     collegeId: "",
     place: "",
-    course: [],
+    department: [],
   }
 
 
@@ -59,16 +59,16 @@ function Register() {
     console.log(e.target.name, e.target.value)
     const preference = parseInt(e.target.name.slice(0, 1))
     if (e.target.name.substring(1) === "collegeId") {
-      let courseObj = { id: preference, ref: e.target.value, maxCandidate: 0 }
+      let departmentObj = { id: preference, ref: e.target.value, maxCandidate: 0 }
       let temp = values;
       //@ts-ignore
-      temp.course.push(courseObj)
+      temp.department.push(departmentObj)
       setValues({ ...temp })
     } else if (e.target.name.substring(1) === "maxCandidate") {
       let temp = values;
       console.log(preference)
       //@ts-ignore
-      temp.course[preference].maxCandidate = e.target.value
+      temp.department[preference].maxCandidate = e.target.value
       setValues({ ...temp })
     }
     else {
@@ -147,7 +147,7 @@ function Register() {
   ]
 
   useEffect(() => {
-    axios.get("/college/department/all").then((res) => {
+    axios.get("/college/course/all").then((res) => {
       console.log(res)
       //@ts-ignore
       const data = [...res.data.map(elem => {
@@ -175,7 +175,7 @@ function Register() {
     label: "Department",
     options: department.filter(department => {
       //@ts-ignore
-      return !values.course.some(course => course.ref === department.value);
+      return !values.department.some(values => values.ref === department.value);
     })
   }
 
@@ -216,10 +216,10 @@ function Register() {
     console.log(temp)
     console.log(values)
     const prevValues = values;
-    console.log(fieldCount, prevValues.course.length - 1)
-    if (fieldCount === prevValues.course.length - 1) {
+    console.log(fieldCount, prevValues.department.length - 1)
+    if (fieldCount === prevValues.department.length - 1) {
       console.log("deleting the values")
-      prevValues.course.pop()
+      prevValues.department.pop()
     }
     setValues({ ...prevValues })
     setSelectFields([...temp])
@@ -237,9 +237,9 @@ function Register() {
   //         console.log(values)
   //         return {
   //           ...field,
-  //           value: values.course[index].ref,
+  //           value: values.department[index].ref,
   //           options: department.filter(department => {
-  //             return !values.course.some(course => course.ref === department.value);
+  //             return !values.department.some(department => department.ref === department.value);
   //           })
   //         }
   //       } else {
@@ -250,7 +250,7 @@ function Register() {
   // }, [values])
 
   return <Fragment>
-    <RegisterForm handleAddDepartment={handleAddDepartment} handleRemove={handleRemove} handleChange={handleChange} handleClear={handleClear} values={values} handleSelectChange={handleSelectChange} handleSubmit={handleSubmit} error={error} fields={fields} selectFields={selectFields} />
+    <RegisterForm address handleAddDepartment={handleAddDepartment} handleRemove={handleRemove} handleChange={handleChange} handleClear={handleClear} values={values} handleSelectChange={handleSelectChange} handleSubmit={handleSubmit} error={error} fields={fields} selectFields={selectFields} />
   </Fragment>
 }
 

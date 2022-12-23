@@ -1,98 +1,46 @@
 import { useEffect, useState } from 'react';
-import Sidebar, { Tab } from '../../Components/Sidebar';
-import { Dashboard, School } from '@mui/icons-material';
 import styled from 'styled-components';
 import DataTable from '../../Components/DataTable';
-import { GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import axios from './axios';
+import { Box } from '@mui/material';
+import BlockButton from './Components/BlockButton';
 
-
-export default function College() {
-  const tab: Array<Tab> = [
-    {
-      name: "Dashboard",
-      linkTo: "/university",
-      icon: <Dashboard />
-    },
-    {
-      name: "College",
-      linkTo: "/university/college",
-      icon: <School />
-    }
-  ]
-  const [active, setActive] = useState("");
-
-  const rows = [
-    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-    { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-  ];
+const College = () => {
 
   const [college, setCollege] = useState([]);
 
   useEffect(() => {
-    axios.get("/university/college/all").then(res => {
-      setCollege(res.data)
-    }).catch(err => {
-      console.log(err)
-    })
-  },[])
-
-  useEffect(() => {
-    console.log(college)
-  }, [college])
+    axios
+      .get('/university/college/all')
+      .then((res) => {
+        console.log(res.data)
+        setCollege(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   const cols: GridColDef[] = [
-    { field: 'collegeId', headerName: 'ID', width: 90 },
+    { field: 'name', headerName: 'Name', flex: 10 },
+    { field: 'email', headerName: 'Email', flex: 10 },
+    { field: 'collegeId', headerName: 'College ID', flex: 8 },
+    { field: 'place', headerName: 'Place', flex: 8 },
     {
-      field: 'firstName',
-      headerName: 'First name',
-      width: 150,
-      editable: true,
-    },
-    {
-      field: 'lastName',
-      headerName: 'Last name',
-      width: 150,
-      editable: true,
-    },
-    {
-      field: 'age',
-      headerName: 'Age',
-      type: 'number',
-      width: 110,
-      editable: true,
-    },
-    {
-      field: 'fullName',
-      headerName: 'Full name',
-      description: 'This column has a value getter and is not sortable.',
-      sortable: false,
-      width: 160,
-      valueGetter: (params: GridValueGetterParams) =>
-        `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+      field: 'isApproved', headerName: 'Is Approved', flex: 8, renderCell: (params: GridRenderCellParams) => (
+        <BlockButton params={params} keyId="collegeId" URL="/college/approval/invert" text={["Block", "Approve"]} />
+      ),
     },
   ];
-  
-
 
   return (
-    <Container>
-      <Sidebar title='Tempe University' tab={tab} active={{ active, setActive }} />
-        <DataTable rows={college} cols={cols} uniqueKey="collegeId"/>
-    </Container>
+    <Box width="100%">
+      <Box padding={5}>
+        <DataTable rows={college} cols={cols} uniqueKey="collegeId" />
+      </Box>
+    </Box>
   );
 }
 
-const Container = styled.div`
-width : 100vw;
-height : 100vh;
-display : grid;
-grid-template-columns : calc(200px + 5vw) calc(95vw - 200px);
-`
+export default College

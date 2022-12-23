@@ -16,6 +16,7 @@ export interface Teacher {
   collegeId : string,
   gender : Gender,
   isApproved : boolean,
+  isBlocked : boolean,
   DOB : Date,
   skills : string,
   totalMark : string,
@@ -27,11 +28,12 @@ const teacherSchema = new mongoose.Schema({
     type : Types.ObjectId,
     default : new Types.ObjectId
   },
-  name : {
+  name : String,
+  email : {
     type : String,
+    lowercase : true,
     unique : true,
   },
-  email : String,
   contact : String,
   password : String,
   subject : String,
@@ -45,6 +47,10 @@ const teacherSchema = new mongoose.Schema({
   isApproved : {
     type : Boolean,
     default : false,
+  },
+  isBlocked : {
+    type : Boolean,
+    default : false
   },
   DOB : Date,
   skills : String,

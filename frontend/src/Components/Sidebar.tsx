@@ -1,6 +1,6 @@
 import { Paper } from '@mui/material'
 import React, { Dispatch, Fragment, SetStateAction } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 
 export interface Tab {
@@ -9,10 +9,9 @@ export interface Tab {
   icon: React.ReactElement
 }
 
-function Sidebar({ title, tab, active }: { title: string, tab: Array<Tab>, active: { active: string, setActive: Function } }) {
+function Sidebar({ title, tab }: { title: string, tab: Array<Tab> }) {
   const navigate = useNavigate()
-
-
+  const location = useLocation();
   return <Fragment>
     <SidebarContainer>
       <Paper elevation={7}>
@@ -22,7 +21,7 @@ function Sidebar({ title, tab, active }: { title: string, tab: Array<Tab>, activ
         {
           tab.map(val => {
             return (
-              <ListItem onClick={() => { active.setActive(val.name); navigate(val.linkTo) }} active={active.active === val.name ? true : false} >
+              <ListItem onClick={() => { navigate(val.linkTo) }} active={val.linkTo === location.pathname ? true : false} >
                 <div id="item">
                   {val.icon}
                   <h4>{val.name}</h4>

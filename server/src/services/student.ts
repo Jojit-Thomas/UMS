@@ -40,8 +40,9 @@ const blockStudents = (email : String, isBlocked : boolean): Promise<void> => {
   })
 }
 
-const fetchAStudentDetails = (email : String) => {
+const fetchAStudentDetails = (email : String):Promise<Student> => {
   return new Promise((resolve, reject) => {
+    //@ts-ignore
     studentModel.findOne({email : email}).then((student) => student ? resolve(student) : reject(createHttpError.NotFound("Student not found"))).catch((err) => {
       console.log(err);
       reject(createHttpError.InternalServerError())
@@ -51,6 +52,7 @@ const fetchAStudentDetails = (email : String) => {
 
 const getStudentBlockStatus = (email : String):Promise<{_id: String, isBlocked : boolean}> => {
   return new Promise((resolve, reject) => {
+    //@ts-ignore
     studentModel.findOne({email : email}, {isBlocked : 1}).then((student) => student ? resolve(student) : reject(createHttpError.NotFound("Student is not found"))).catch((err) => {
       console.log(err);
       reject(createHttpError.InternalServerError())
@@ -58,4 +60,33 @@ const getStudentBlockStatus = (email : String):Promise<{_id: String, isBlocked :
   })
 }
 
-export default { createStudentAllotment, createStudent, fetchStudents, blockStudents, fetchAStudentDetails, getStudentBlockStatus }
+const getStudentApplicationAfterDate = (date : Date): Promise<studentApplicationFormType[]> => {
+  return new Promise((resolve, reject) => {
+    //@ts-ignore
+    studentApplicationModel.find({date : {$gt : date}}).then((studentApplication) => resolve(studentApplication)).catch(err => {
+      console.log(err) 
+      reject(createHttpError.InternalServerError())
+    })
+  })
+}
+
+const fetchStudenAllotementDetails = (email : string): Promise<studentApplicationFormType> => {
+  return new Promise((resolve, reject) => {
+    //@ts-ignore
+    studentApplicationModel.findOne({email : email}).lean().then((student) => resolve(student)).catch(err => {
+      console.log(err)
+      reject(createHttpError.InternalServerError())
+    })
+  })
+}
+
+export default {
+  createStudentAllotment,
+  createStudent,
+  fetchStudents,
+  blockStudents,
+  fetchAStudentDetails,
+  getStudentBlockStatus,
+  getStudentApplicationAfterDate,
+  fetchStudenAllotementDetails,
+};

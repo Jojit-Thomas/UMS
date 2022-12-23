@@ -6,6 +6,12 @@ import { RequestHandler } from "express";
 import createHttpError from "http-errors";
 import studentDB from "../services/student";
 import validation from "../services/validation";
+import { studentApplicationFormType } from "../models/student_application_model";
+import { College } from "../models/college_model";
+import collegeDB from "../services/college";
+import classDB from "../services/class";
+import { Student } from "../models/student_model";
+import { Chats } from "../models/class_model";
 dotenv.config();
 
 var instance = new Razorpay({
@@ -92,10 +98,127 @@ const admissionPayment: RequestHandler = async (req, res, next) => {
 
 const allSubjects: RequestHandler = async (req, res, next) => {
   try {
-    res.send("All subjects will be provided")
+    console.log(req.user)
+    //@ts-ignore
+    let {sem} = await classDB.fetchClassDetails(req.user.class)
+    //@ts-ignore
+    let subjects = await collegeDB.getStudentSubjects(req.user.course, sem )
+    res.status(200).json(subjects)
+    // res.send("All subjects will be provided")
   } catch (err: any) {
     res.status(err.status || 500).json(err.message || "Internal server error")
   }
 }
 
-export default { createStudentAllotment, createStudent, allStudents, blockStudent, getAStudent, admissionPayment, allSubjects }
+
+const allotment: RequestHandler = async (req, res, next) => {
+  try {
+    let date = moment(new Date).subtract(1, "year").toDate()
+    console.log(date)
+    let studentApplication = await studentDB.getStudentApplicationAfterDate(date)
+    let colleges = await collegeDB.fetchAllCollege();
+    let {selectedStudents, rejectedStudents} = assignToCollege(studentApplication, colleges)
+    let classes = assignToClass(selectedStudents);
+    classes.forEach(async (elem: any) => {
+      await classDB.createClass(elem)
+      // console.log(classes)
+      elem.students.forEach(async (student : any) => {
+        let studentForm = await studentDB.fetchStudenAllotementDetails(student.email)
+        let newStudnet : Student = studentForm as never
+        newStudnet = newStudnet as Student
+        newStudnet.isBlocked = false;
+        newStudnet.classId = elem.classId;
+        newStudnet.course = elem.course;
+        newStudnet.attendence = [];
+        await studentDB.createStudent(newStudnet)
+      })
+    })
+    res.sendStatus(204)
+  } catch (err: any) {
+    res.status(err.status || 500).json(err.message || "Internal server error")
+  }
+}
+
+const newChat:RequestHandler = async (req, res, next) => {
+  try {
+    console.log(req.user)
+    const {message} = req.body;
+    let chat : Chats = {
+      name : req.user.name,
+      email : req.user.aud,
+      date : new Date,
+      message : message
+    }
+    await classDB.newChat(req.user.class, chat)
+    res.sendStatus(204)
+  } catch(err : any) {
+    res.status(err.status || 500).json(err.message || "Internal server error")
+  }
+}
+
+export default { createStudentAllotment, createStudent, allStudents, blockStudent, getAStudent, admissionPayment, allSubjects, allotment, newChat }
+
+function assignToCollege(students: studentApplicationFormType[], colleges: College[]) {
+  const selectedStudents = []
+  const rejectedStudents = []
+  // Sort the students array in descending order by their marks
+  students.sort((a, b) => b.totalMark - a.totalMark);
+  for (let student of students) {
+    // Iterate over the student's admission preferences
+    for (let preference of student.admissionPreference) {
+      // Find the corresponding college object
+      let college = colleges.find(c => c.collegeId === preference.collegeId);
+
+      // Find the corresponding department object
+      let department = college!.department.find(d => d.name === preference.course);
+
+      // Check if there are any available seats in the department
+      let yearIndex = department?.seats.findIndex(x => x.year === moment(new Date).year())
+      console.log(department!.seats[yearIndex!].seats)
+      if (department!.seats[yearIndex!].seats < department?.maxCandidate!) {
+        // Accept the student to the department and decrease the number of available seats
+        department!.seats[yearIndex!].seats++;
+        selectedStudents.push({collegeId : college?.collegeId, course : department?.name, name : student.name, email : student.email})
+        break;
+      } else {
+        if(preference.preference === 3) {
+          rejectedStudents.push({name : student.name, email : student.email})
+        }
+      }
+    }
+  }
+  return {selectedStudents, rejectedStudents};
+}
+
+
+function assignToClass(students : any) {
+  // Create an object to store the classes
+  const classes: any = {};
+
+  // Iterate over the students
+  for (const student of students) {
+    // Create a key for the class using the collegeId and course
+    const key = `${student.collegeId}-${student.course}`;
+
+    // If the class doesn't exist yet, create it
+    if (!classes[key]) {
+      classes[key] = {
+        collegeId: student.collegeId,
+        course: student.course,
+        classId : `${student.collegeId + student.course + moment(new Date).year()}`,
+        year : moment(new Date).year(),
+        sem : 1,
+        students: [],
+      };
+    }
+
+    // Push the student's name to the class's students array
+    classes[key].students.push({name : student.name, email : student.email});
+  }
+
+  // Convert the object of classes into an array
+  const classArray: any = Object.values(classes);
+
+  // Return the array of class objects
+  return classArray;
+}

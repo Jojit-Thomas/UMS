@@ -1,10 +1,27 @@
 import mongoose, { Types } from "mongoose";
 import { COLLEGE_COLLECTION } from "../constants/constants";
+import moment from "moment";
 
-interface course {
-  id: number,
-  ref: string,
-  maxCandidate: Number,
+
+interface Subjects {
+  name: string,
+  teacher: string
+}
+
+interface Seats {
+  year : number,
+  seats : number
+}
+
+export interface Department {
+  name: string,
+  qualification: string,
+  maxCandidate: number,
+  semesters: [{
+    sem: number,
+    subjects: Subjects[]
+  }],
+  seats : Seats[]
 }
 
 export interface College {
@@ -15,16 +32,27 @@ export interface College {
   password: string,
   contact: string,
   address: string,
-  course: course[],
+  department: Department[],
   isApproved: boolean,
 }
 
 console.log(new Types.ObjectId)
 
-const courseSchema = new mongoose.Schema({
-  id: Number,
-  ref: String,
-  maxCandidate: Number
+const departmentSchema = new mongoose.Schema({
+  name : String,
+  qualification : String,
+  maxCandidate: Number,
+  semesters : [{
+    sem: Number,
+    subjects: [{
+      name: String,
+      teacher : String
+    }]
+  }],
+  seats : {
+    type: Array,
+    default : [{year : moment(new Date).year(), seats: 0}]
+  }
 }, { _id: false })
 
 
@@ -36,9 +64,11 @@ const collegeSchema = new mongoose.Schema({
     unique: true
   },
   password: String,
+  contact: String,
+  address: String,
   place: String,
   university: Types.ObjectId,
-  course: [courseSchema],
+  department: [departmentSchema],
   isApproved: {
     type: Boolean,
     default: false,

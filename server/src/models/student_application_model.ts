@@ -14,7 +14,7 @@ export interface studentApplicationFormType {
   name: string,
   address: string,
   email: string,
-  totalMark: Number,
+  totalMark: number,
   contact: string,
   admissionPreference: [admissionPreferenceType],
   gender: Gender,
@@ -22,6 +22,7 @@ export interface studentApplicationFormType {
   DOB: Date,
   educationalQualification : string,
   password : string,
+  date : Date,
 }
 
 
@@ -32,7 +33,11 @@ const studentApplicationSchema = new mongoose.Schema({
   },
   name: String,
   address: String,
-  email: String,
+  email: {
+    type : String,
+    lowercase : true,
+    unique : true,
+  },
   totalMark: Number,
   contact: String,
   admissionPreference: [{
@@ -48,6 +53,10 @@ const studentApplicationSchema = new mongoose.Schema({
   DOB: Date,
   educationalQualification : String,
   password : String,
+  date : {
+    type : Date,
+    default : new Date()
+  }
 }, { _id: false })
 
 

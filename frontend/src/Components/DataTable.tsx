@@ -6,7 +6,7 @@ import styled from 'styled-components';
 export default function DataTable({rows, cols, uniqueKey}: {rows : Array<Object>, cols : GridColDef[], uniqueKey : string}) {
   return (
     <Container>
-      <Box sx={{ height: 400, width: '95%' }} margin={5} >
+      <Box sx={{ height: 400, width: '100%' }} >
         <DataGrid
           rows={rows}
           columns={cols}
@@ -15,7 +15,6 @@ export default function DataTable({rows, cols, uniqueKey}: {rows : Array<Object>
           rowsPerPageOptions={[5]}
           checkboxSelection
           disableSelectionOnClick
-          experimentalFeatures={{ newEditingApi: true }}
         />
       </Box>
     </Container>

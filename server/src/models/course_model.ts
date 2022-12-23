@@ -29,9 +29,9 @@
 
 
 import mongoose, { Types } from "mongoose"
-import { DEPARTMENT_COLLECTION } from "../constants/constants"
+import { COURSE_COLLECTION } from "../constants/constants"
 
-export interface Department {
+export interface Course {
   name: string,
   qualification: string,
   semesters: [{
@@ -41,7 +41,7 @@ export interface Department {
 }
 
 
-const departmentSchema = new mongoose.Schema({
+const courseSchema = new mongoose.Schema({
   _id: {
     type: Types.ObjectId,
     default: Types.ObjectId
@@ -57,4 +57,4 @@ const departmentSchema = new mongoose.Schema({
   }]
 }, { _id: false })
 
-export const departmentModel = mongoose.model("departmentModel", departmentSchema, DEPARTMENT_COLLECTION)
+export const courseModel = mongoose.model("courseModel", courseSchema, COURSE_COLLECTION)

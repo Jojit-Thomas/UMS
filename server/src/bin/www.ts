@@ -85,8 +85,17 @@ function onError(error: any) {
 
 function onListening() {
   var addr = server.address();
+  requiredVariables();
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr?.port;
   debug('Listening on ' + bind);
+}
+
+function requiredVariables(){
+  if (!process.env.JWT_ACCESS_TOKEN) throw new Error("JWT_ACCESS_TOKEN is not provided in env")
+  if (!process.env.JWT_REFRESH_TOKEN) throw new Error("JWT_REFRESH_TOKEN is not provided in env")
+  if (!process.env.JWT_ADMIN_ACCESS_TOKEN) throw new Error("JWT_ADMIN_ACCESS_TOKEN is not provided in env")
+  if (!process.env.JWT_COLLEGE_ACCESS_TOKEN) throw new Error("JWT_COLLEGE_ACCESS_TOKEN is not provided in env")
+  if (!process.env.JWT_TEACHER_ACCESS_TOKEN) throw new Error("JWT_TEACHER_ACCESS_TOKEN is not provided in env")
 }

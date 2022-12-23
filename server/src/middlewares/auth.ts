@@ -10,17 +10,17 @@ const client = connectRedis();
 
 const verifyStudent: RequestHandler = (req, res, next) => {
   try {
-    if (!process.env.JWT_ACCESS_TOKEN) throw new Error("Jwt access token is not provided in env")
     if (!req.headers.authorization) throw ({ status: 401, message: "Unauthorized" })
     const accessToken = req.headers.authorization;
     console.log(accessToken)
-    const user = jwt.verify(accessToken, process.env.JWT_ACCESS_TOKEN)
+    const user = jwt.verify(accessToken, process.env.JWT_ACCESS_TOKEN!)
     console.log("```user``` : ", user)
     req.user = user;
     next()
   } catch (e: any) {
     console.table(e)
-    if (e.name === 'TokenExpiredError' && e.message === 'jwt expired') {
+    const err = ['TokenExpiredError', 'JsonWebTokenError']
+    if (err.includes(e.name)) {
       res.status(401).json(e)
     } else {
       res.status(e.status || 500).json(e.message);
@@ -34,10 +34,9 @@ const verifyStudent: RequestHandler = (req, res, next) => {
 const verifyUniversity: RequestHandler = (req, res, next) => {
   try {
     console.log("hey")
-    if (!process.env.JWT_ADMIN_ACCESS_TOKEN) throw new Error("Jwt access token is not provided in env")
     const accessToken = req.headers.authorization;
     if (!accessToken) throw ({ status: 401, message: "Unauthorized" })
-    const user = jwt.verify(accessToken, process.env.JWT_ADMIN_ACCESS_TOKEN)
+    const user = jwt.verify(accessToken, process.env.JWT_ADMIN_ACCESS_TOKEN!)
     console.log("```user``` : ", user)
     req.universtiy = user;
     next()
@@ -56,4 +55,43 @@ const verifyUniversity: RequestHandler = (req, res, next) => {
   }
 }
 
-export default { verifyStudent, verifyUniversity }
+
+const verifyCollege: RequestHandler = (req, res, next) => {
+  try {
+    const accessToken = req.headers.authorization;
+    if (!accessToken) throw createHttpError.BadRequest("Access Token is not provided");
+    const user = jwt.verify(accessToken, process.env.JWT_COLLEGE_ACCESS_TOKEN!)
+    console.log("```user``` : ", user)
+    req.user = user;
+    next()
+  } catch (e: any) {
+    console.table(e)
+    if (e.name === 'TokenExpiredError' && e.message === 'jwt expired') {
+      res.status(401).json(e)
+    } else {
+      res.status(e.status || 500).json(e.message);
+    }
+  }
+}
+
+
+const verifyTeacher: RequestHandler = (req, res, next) => {
+  try {
+    const accessToken = req.headers.authorization;
+    if (!accessToken) throw createHttpError.BadRequest("Access Token is not provided");
+    const user = jwt.verify(accessToken, process.env.JWT_TEACHER_ACCESS_TOKEN!)
+    console.log("```user``` : ", user)
+    req.user = user;
+    next()
+  } catch (e: any) {
+    console.table(e)
+    if (e.name === 'TokenExpiredError' && e.message === 'jwt expired') {
+      res.status(401).json(e)
+    } else {
+      res.status(e.status || 500).json(e.message);
+    }
+  }
+}
+
+
+export default { verifyStudent, verifyUniversity, verifyCollege, verifyTeacher }

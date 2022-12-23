@@ -12,29 +12,27 @@ interface Attendence {
 export interface Student {
   name : string,
   email : string,
-  phone : string,
+  contact : string,
   address : string,
   password: string,
   DOB : Date,
   gender : Gender,
-  batch : string,
+  classId : string,
   isBlocked : boolean,
-  attendence : Array<Attendence>,
-
+  attendence : Array<Attendence>
+  course : string,
 }
 
 const studentSchema = new mongoose.Schema({
-  _id : {
-    type : Types.ObjectId,
-    default : new Types.ObjectId
-  },
+  _id : Types.ObjectId,
   name : String,
   email : {
     type: String,
+    lowercase : true,
     unique : true,
   },
   password : String,
-  phone : String,
+  contact : String,
   address: String,
   isBlocked : {
     type : Boolean,
@@ -42,12 +40,13 @@ const studentSchema = new mongoose.Schema({
   },
   DOB : Date,
   gender : String,
-  batch : String,
+  classId : String,
+  course : String,
   attendence : [{
     date : Date,
     subject : String,
     isPresent: Boolean
   }]
-}, {_id : false})
+})
 
 export const studentModel = mongoose.model("studentModel", studentSchema, STUDENT_COLLECTION)

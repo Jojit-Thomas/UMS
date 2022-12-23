@@ -135,7 +135,7 @@ function Register() {
     console.log(values)
     //@ts-ignore
     console.log(college[0].course.map(course => {
-      return { value: course.ref, label: course.ref };
+      return { value: course.name, label: course.name };
     }))
     //@ts-ignore
     console.log(college[0].course)
@@ -145,16 +145,19 @@ function Register() {
     axios.get("/college/list").then((res) => {
       //@ts-ignore
       const data = [...res.data.map(elem => {
-        return { value: elem.collegeId, label: elem.name, course: elem.course };
+        return { value: elem.collegeId, label: elem.name, course: elem.department };
       })]
+      console.log(data)
       //@ts-ignore
       setCollege(data)
     })
   }, [])
 
+  useEffect(() => console.log([...college]),[college])
 
 
-  const [selectFields, setSelectFields] = useState<Select[]>([
+
+const selectFields = [
     {
       id: 4,
       name: "gender",
@@ -192,7 +195,7 @@ function Register() {
       options: college ? (values?.admissionPreference[0].collegeId !== "") ? // If college is recieved and the college is selected
         //@ts-ignore
         college.find(x => x.value === values.admissionPreference[0].collegeId).course.map(course => {
-          return { value: course.ref, label: course.ref };
+          return { value: course.name, label: course.name };
         }) : [] : []
     },
     {
@@ -208,7 +211,7 @@ function Register() {
       options: college ? (values.admissionPreference[1].collegeId !== "") ?
         //@ts-ignore
         college.find(x => x.value === values.admissionPreference[1].collegeId).course.map(course => {
-          return { value: course.ref, label: course.ref };
+          return { value: course.name, label: course.name };
         }) : [] : []
     },
     {
@@ -224,10 +227,11 @@ function Register() {
       options: college ? (values.admissionPreference[2].collegeId !== "") ?
         //@ts-ignore
         college.find(x => x.value === values.admissionPreference[2].collegeId).course.map(course => {
-          return { value: course.ref, label: course.ref };
+          console.log(course)
+          return { value: course.name, label: course.name };
         }) : [] : []
     },
-  ])
+  ]
 
 
   const handleSubmit = (): void => {
@@ -274,7 +278,7 @@ function Register() {
   }
 
   return <Fragment>
-    <RegisterForm submit='Pay now' date={date} handleChange={handleChange} handleClear={handleClear} handleDateChange={handleDateChange} values={values} handleSelectChange={handleSelectChange} handleSubmit={handleSubmit} error={error} fields={fields} selectFields={selectFields} />
+    <RegisterForm address submit='Pay now' date={date} handleChange={handleChange} handleClear={handleClear} handleDateChange={handleDateChange} values={values} handleSelectChange={handleSelectChange} handleSubmit={handleSubmit} error={error} fields={fields} selectFields={selectFields} />
   </Fragment>
 }
 

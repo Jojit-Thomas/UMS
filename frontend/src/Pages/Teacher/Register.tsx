@@ -38,6 +38,7 @@ function Register() {
       const data = [...res.data.map(elem => {
         return { value: elem.collegeId, label: elem.name, course: elem.course };
       })]
+      console.log(data)
       //@ts-ignore
       setCollege(data)
     })
@@ -200,7 +201,7 @@ function Register() {
       label: "Subjects",
       options: college ? (values.collegeId !== "") ? // If college is recieved and the college is selected
         //@ts-ignore
-        college.find(x => x.value === values.college).course.map(course => {
+        college.find(x => x.value === values.collegeId).course.map(course => {
           return { value: course.ref, label: course.ref };
         }) : [] : []
     }
@@ -211,7 +212,7 @@ function Register() {
   }
 
   return <Fragment>
-    <RegisterForm date={date} handleChange={handleChange} handleClear={handleClear} handleDateChange={handleDateChange} values={values} handleSelectChange={handleSelectChange} handleSubmit={handleSubmit} error={error} fields={fields} selectFields={selectFields} />
+    <RegisterForm address date={date} handleChange={handleChange} handleClear={handleClear} handleDateChange={handleDateChange} values={values} handleSelectChange={handleSelectChange} handleSubmit={handleSubmit} error={error} fields={fields} selectFields={selectFields} />
   </Fragment>
 }
 

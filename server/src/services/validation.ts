@@ -59,7 +59,7 @@ const collegeSchema = Joi.object({
   password: Joi.string().min(8).max(40).required(),
   address: Joi.string().min(3).max(60).required(),
   place: Joi.string().required(),
-  course: Joi.array().required()
+  department: Joi.array().required()
 })
 
 const teacherSchema = Joi.object({
@@ -85,15 +85,12 @@ const teacherSchema = Joi.object({
 })
 
 
-const departmentSchema = Joi.object({
+const courseSchema = Joi.object({
   name: Joi.string().min(3).max(30).required(),
   qualification: Joi.string().required(),
   semesters: Joi.array().required()
-  // semesters: [{
-  //   sem: Joi.number().required(),
-  //   subjects: Joi.array().required()
-  // }]
 })
+
 
 
 
@@ -146,9 +143,9 @@ const isTeacherSchemaValid = (params: Teacher): Promise<Teacher> => {
 }
 
 
-const isDepartmentSchemaValid = (params: College): Promise<College> => {
+const isCourseSchemaValid = (params: College): Promise<College> => {
   return new Promise(async (resolve, reject) => {
-    const { error, value } = await departmentSchema.validate(params, { abortEarly: false })
+    const { error, value } = await courseSchema.validate(params, { abortEarly: false })
     if (error) {
       reject(createHttpError.BadRequest(JSON.stringify(error.details)))
     } else {
@@ -161,4 +158,4 @@ const isDepartmentSchemaValid = (params: College): Promise<College> => {
 
 
 
-export default { isCreateStudentValid, isStudentApllicationFormValid, isCollegeSchemaValid, isTeacherSchemaValid, isDepartmentSchemaValid }
+export default { isCreateStudentValid, isStudentApllicationFormValid, isCollegeSchemaValid, isTeacherSchemaValid, isCourseSchemaValid }

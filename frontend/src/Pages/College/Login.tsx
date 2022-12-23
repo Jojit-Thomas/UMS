@@ -1,10 +1,11 @@
-import axios from './axios';
-import { Fragment, useState } from 'react'
+import React, { useState } from 'react'
+import LoginComponent from '../../Components/LoginComponent';
 import { useNavigate } from 'react-router-dom';
-import LoginComponent from "../../Components/LoginComponent"
+import axios from './axios';
 
-function Login() {
+const Login = () => {
 
+  
   const navigate = useNavigate()
   interface Values {
     email: String,
@@ -23,14 +24,11 @@ function Login() {
   const handleSubmit = (): void => {
     console.log(values);
     axios
-      .post("/auth/student/login", values)
+      .post("/auth/college/login", values)
       .then((result) => {
         console.log("success : ", result);
-        localStorage.setItem("studentAccessToken", result.data.accessToken);
-        localStorage.setItem("studentRefreshToken", result.data.refreshToken);
-        localStorage.setItem("studentName", result.data.user);
-        localStorage.setItem("studentClass", result.data.classId);
-        navigate('/student')
+        localStorage.setItem("collegeAccessToken", result.data.accessToken);
+        navigate('/')
       })
       .catch((error) => {
         console.log(error)
@@ -42,8 +40,8 @@ function Login() {
   const fields = [
     {
       id: 1,
-      name: "email",
-      label: "Email",
+      name: "collegeId",
+      label: "College Id",
     },
     {
       id: 2,
@@ -52,9 +50,9 @@ function Login() {
     }
   ]
 
-  return <Fragment>
-    <LoginComponent handleChange={handleChange} handleSubmit={handleSubmit} error={error} fields={fields}></LoginComponent>
-  </Fragment>
+  return (
+    <LoginComponent handleChange={handleChange} handleSubmit={handleSubmit} error={error} fields={fields} />
+  )
 }
 
 export default Login

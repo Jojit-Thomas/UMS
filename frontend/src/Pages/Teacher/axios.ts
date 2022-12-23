@@ -6,11 +6,11 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use((config) => {
-  const adminAccessToken = localStorage.getItem("adminAccessToken");
-  //checking if adminAccessToken exists
-  if (adminAccessToken) {
+  const teacherAccessToken = localStorage.getItem("teacherAccessToken");
+  //checking if teacherAccessToken exists
+  if (teacherAccessToken) {
     config.headers = config.headers ?? {};
-    config.headers["authorization"] = adminAccessToken;
+    config.headers["authorization"] = teacherAccessToken;
   }
   return config;
 });

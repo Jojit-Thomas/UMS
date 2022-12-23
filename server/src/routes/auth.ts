@@ -8,8 +8,9 @@ import Auth from "../controllers/auth"
 
 router.post("/student/access/refresh", Auth.refreshAccessToken);
 router.post("/student/login", Auth.studentLogin);
+router.post("/teacher/login", Auth.teacherLogin);
 router.delete("/student/logout", Auth.logout);
-
 router.post("/university/login", Auth.universityLogin)
+router.post("/college/login", Auth.collegeLogin)
 
 export default router;

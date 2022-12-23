@@ -1,6 +1,6 @@
 import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField, Typography } from '@mui/material'
 import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers'
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Add, Delete } from '@mui/icons-material';
@@ -23,19 +23,20 @@ export interface Select {
   }>
 }
 
-function RegisterForm({ handleChange, handleSubmit, handleClear, handleSelectChange, handleAddDepartment, handleRemove, submit, date, handleDateChange, values, fields, selectFields, error }:
+function RegisterForm({ handleChange, handleSubmit, handleClear, handleSelectChange, handleAddDepartment, handleRemove,address, submit, date, handleDateChange, values, fields, selectFields, error }:
   {
     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
-    handleSelectChange: (e: SelectChangeEvent) => void,
+    handleSelectChange?: (e: SelectChangeEvent) => void,
     handleSubmit: () => void, fields: Array<Fields>,
     handleDateChange?: (e: any) => void,
-    handleClear: () => void,
+    handleClear?: () => void,
     handleAddDepartment?: (e: React.MouseEvent<HTMLElement>) => void,
     handleRemove?: (e: React.MouseEvent<HTMLElement>) => void,
     submit?: string,
-    date?: any
-    values: any
-    selectFields: Array<Select>, error: string
+    date?: any,
+    values: any,
+    selectFields?: Array<Select>, error: string,
+    address ?: boolean,
   }) {
 
   return <Fragment>
@@ -59,7 +60,7 @@ function RegisterForm({ handleChange, handleSubmit, handleClear, handleSelectCha
                     id="outlined-error-helper-text"
                     label={field.label}
                     //@ts-ignore
-                    value={values[field.name]}
+                    value={values?.[field.name]}
                     fullWidth
                     onChange={handleChange}
                     error={field.error ? true : false}
@@ -83,7 +84,7 @@ function RegisterForm({ handleChange, handleSubmit, handleClear, handleSelectCha
               </Grid>
             </LocalizationProvider>
           }
-          {
+          { selectFields && 
             selectFields.map(field => {
               return (
                 <Grid item xs={12} sm={field?.width ? field.width : 6}>
@@ -117,7 +118,8 @@ function RegisterForm({ handleChange, handleSubmit, handleClear, handleSelectCha
               <Button variant="text" onClick={handleRemove} sx={{ "marginRight": "1rem" }} startIcon={<Delete />}>Remove</Button >
             </Grid>
           }
-          <Grid item xs={12}>
+          {
+            address && <Grid item xs={12}>
             <TextField
               name="address"
               id="outlined-error-helper-text"
@@ -129,6 +131,7 @@ function RegisterForm({ handleChange, handleSubmit, handleClear, handleSelectCha
               onChange={handleChange}
             />
           </Grid>
+          }
           <Typography variant='body2' textAlign='center' color="#f00">{error ? error : null}</Typography>
         </Grid>
         <Grid container direction="row-reverse">
