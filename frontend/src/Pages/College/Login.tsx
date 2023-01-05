@@ -28,7 +28,7 @@ const Login = () => {
       .then((result) => {
         console.log("success : ", result);
         localStorage.setItem("collegeAccessToken", result.data.accessToken);
-        navigate('/')
+        navigate('/college')
       })
       .catch((error) => {
         console.log(error)

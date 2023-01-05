@@ -10,11 +10,11 @@ import Typography from '@mui/material/Typography';
 import { CardActionArea, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components';
+import BoookImg from "../../assets/book.webp"
 
 
 const Home = () => {
   const [classes, setClasses] = useState([]);
-  const classId = localStorage.getItem("studentClass")
   useEffect(() => {
     axios.get("/teacher/class/all").then((res) => { 
       console.log(res)
@@ -22,16 +22,16 @@ const Home = () => {
     })
   }, [])
   return (
-    <Grid container spacing={2} margin={2}>
+    <div className='grid grid-cols-6 '>
       {classes && 
         classes.map(obj => {
           return(
             //@ts-ignore
-            <ImageCard title={`${obj.subject + " - Sem : " + obj.semester }`} description={`${obj.department}`} url={`/student/${classId}/${obj.name}`} />
+            <ImageCard title={`${obj.subject}`} description={`${obj.department + " - Sem : " + obj.semester }`} url={`/teacher/${obj.department}/${obj.subject}/${obj.semester}`} />
           )
         })
       }
-    </Grid>
+    </div>
   )
 }
 
@@ -49,14 +49,14 @@ const DataBox = styled.div`
 function ImageCard({ title, description, url }: { title: string, description?: string, url: string }) {
   const navigate = useNavigate();
   return (
-    <Grid item xs={12} sm={4} lg={3}>
+    <div className='m-3'>
       <Card sx={{ maxWidth: 345 }}>
       <CardActionArea>
         <CardMedia
           onClick={() => navigate(url)}
           component="img"
           height="140"
-          image="https://leverageedublog.s3.ap-south-1.amazonaws.com/blog/wp-content/uploads/2020/05/28184543/List-of-Humanities-Subjects.png"
+          image={BoookImg}
           alt="green iguana"
         />
         <CardContent>
@@ -69,6 +69,6 @@ function ImageCard({ title, description, url }: { title: string, description?: s
         </CardContent>
       </CardActionArea>
     </Card>
-    </Grid>
+    </div>
   );
 }

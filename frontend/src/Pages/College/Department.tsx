@@ -8,7 +8,7 @@ import DataTable from '../../Components/DataTable';
 import { Add } from '@mui/icons-material';
 
 const Department = () => {
-  
+
   const [course, setCourse] = useState([]);
   const navigate = useNavigate();
 
@@ -36,7 +36,9 @@ const Department = () => {
   return (
     <Box width="100%">
       <Box padding={5}>
-        <Box width="100%" height="3rem" display="flex" flexDirection="row-reverse" paddingY={2} ><Button variant='contained' size='small' startIcon={<Add />} onClick={() => navigate("/college/department/add")} >New Department</Button></Box>
+        <div className='flex flex-row-reverse py-2'>
+          <Button variant='contained' startIcon={<Add />} onClick={() => navigate("/college/department/add")} >New Department</Button>
+        </div>
         <DataTable rows={course} cols={cols} uniqueKey="name" />
       </Box>
     </Box>

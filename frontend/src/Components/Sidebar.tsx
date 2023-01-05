@@ -9,11 +9,11 @@ export interface Tab {
   icon: React.ReactElement
 }
 
-function Sidebar({ title, tab }: { title: string, tab: Array<Tab> }) {
+function Sidebar({ title, tab, className }: { title: string, tab: Array<Tab>, className ?: string }) {
   const navigate = useNavigate()
   const location = useLocation();
   return <Fragment>
-    <SidebarContainer>
+    <SidebarContainer className={className || ''}>
       <Paper elevation={7}>
         <div>
           <Title>{title}</Title>
@@ -67,8 +67,7 @@ const ListItem = styled.div<{ active: boolean }>`
 `
 
 const SidebarContainer = styled.div`
-  width : 100%;
+  // width : 100%;
   height : 100%;
   display : grid;
-
 `

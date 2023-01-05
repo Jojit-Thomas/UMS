@@ -18,5 +18,8 @@ router.post('/admission/pay', student.admissionPayment)
 
 router.patch('/chat/add', authMW.verifyStudent, student.newChat)
 
+router.get('/chat/:subject', authMW.verifyStudent, student.getAllChats)
+
+router.get('/people/all/:subject', authMW.verifyStudent, student.allPeople)
 
 export default router;

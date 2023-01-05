@@ -20,7 +20,10 @@ const interceptor = instance.interceptors.response.use((res => res), err => {
   console.log(err)
   const originalRequest = err.config.data;
   // originalRequest._retry = true;
-  if(err.response.status === 401 && err.response.data.name === 'TokenExpiredError'){
+  if(err.response.status === 400 && err.response.data === "ACCESS_TOKEN_NOTFOUND"){
+    window.location.href = "/college/login"
+  }
+  else if(err.response.status === 401 && err.response.data.name === 'TokenExpiredError'){
     // instance.interceptors.response.eject(interceptor);
     // let refreshToken = localStorage.getItem("refreshToken")
     // return axios.post("http://localhost:4000/api/auth/access/refresh", {

@@ -45,13 +45,18 @@ const Index = () => {
     <>
       {
         (!notRestrictedRoutes.includes(path)) ? <SidebarContainer>
-          <Sidebar title='Tempe University' tab={tab} />
-          <Box>
-            <Header user="User" logout={() => { }} />
-            <Box padding={4}>
-              <Outlet />
-            </Box>
-          </Box>
+          <div className='hidden md:grid w-screen h-screen grid-cols-12'>
+            <Sidebar title='Tempe University' tab={tab} className='col-span-2' />
+            <div className='col-span-10'>
+              <Header user="User" logout={() => { }} />
+              <Box padding={4}>
+                <Outlet />
+              </Box>
+            </div>
+          </div>
+          <div className='block md:hidden w-screen h-screen'>
+            <Outlet />
+          </div>
         </SidebarContainer> :
           <Outlet />
       }

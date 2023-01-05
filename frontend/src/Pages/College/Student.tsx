@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 const Student = () => {
   const [teacher, setTeacher] = useState([]);
   useEffect(() => {
-    axios.get("/college/teacher/all").then((res) => {
+    axios.get("/college/student/all").then((res) => {
       console.log(res.data)
       setTeacher(res.data)
     })
@@ -20,16 +20,16 @@ const Student = () => {
 
   const cols: GridColDef[] = [
     { field: 'name', headerName: 'Name', flex: 10, minWidth: 100 },
-    { field: 'collegeId', headerName: 'College ID', flex: 8, minWidth: 100 },
-    { field: 'subject', headerName: 'Subject', flex: 8, minWidth: 100 },
-    { field: 'skills', headerName: 'Skills', flex: 8, minWidth: 100 },
-    { field: 'qualification', headerName: 'Qualification', flex: 8, minWidth: 100 },
-    { field: 'totalMark', headerName: 'Mark', flex: 3, minWidth: 50 },
+    // { field: 'collegeId', headerName: 'College ID', flex: 8, minWidth: 100 },
+    { field: 'course', headerName: 'Course', flex: 8, minWidth: 100 },
+    { field: 'gender', headerName: 'Gender', flex: 8, minWidth: 100 },
+    { field: 'address', headerName: 'Address', flex: 8, minWidth: 100 },
+    { field: 'classId', headerName: 'Class ID', flex: 3, minWidth: 100 },
     { field: 'contact', headerName: 'Contact', flex: 10, minWidth: 100 },
     { field: 'email', headerName: 'Email', flex: 15, minWidth: 100 },
     {
       field: 'isBlocked', headerName: 'Actions', flex: 8, renderCell: (params: GridRenderCellParams) => (
-        <BlockButton params={params} URL="/college/teacher/block" keyId='email' text={["Block", "Unblock"]} />
+        <BlockButton params={params} URL="/college/student/block" keyId='email' text={["Unblock", "Block"]} />
       ),
     },
     {

@@ -4,6 +4,8 @@ import validation from "../services/validation";
 import createHttpError from "http-errors";
 import bcrypt from "bcrypt";
 import college from "../services/college";
+import classDB from "../services/class";
+import { Chats } from "../models/class_model";
 
 const createTeacher: RequestHandler = async (req, res, next) => {
   try {
@@ -87,6 +89,50 @@ const allClasses: RequestHandler = async (req, res, next) => {
   }
 }
 
+const getAllChats: RequestHandler = async (req, res, next) => {
+  try {
+    const {department, subject, semester} = req.params;
+    let chats = await classDB.teacherAllChats(department, subject, parseInt(semester))
+    console.log(chats)
+    res.status(200).json(chats)
+  } catch (err: any) {
+    res.status(err.status || 500).json(err.message || "Internal Server Error")
+  }
+}
+  
+
+const newChat:RequestHandler = async (req, res, next) => {
+  try {
+    console.log(req.user)
+    const {message, subject, classId} = req.body;
+    let chat : Chats = {
+      name : req.user.name,
+      email : req.user.aud,
+      date : new Date,
+      subject : subject,
+      message : message
+    }
+    await classDB.newChat(classId, chat)
+    res.sendStatus(204)
+  } catch(err : any) {
+    res.status(err.status || 500).json(err.message || "Internal server error")
+  }
+}
+
+const allPeople: RequestHandler = async (req, res, next) => {
+  try {
+    const {department, subject, semester} = req.params;
+    console.log("subject : ",subject)
+    let students = await classDB.allStudents(department, semester)
+    //@ts-ignore
+    // let teachers = await collegeDB.findTeacherInClass(students.collegeId, student.course, students.sem, subject)
+    // console.log(teachers)
+    res.status(200).json({students : students.students, teachers : req.user.aud})
+  } catch (err: any) {
+    console.log(err)
+    res.status(err.status || 500).json(err.message || "Internal server error")
+  }
+}
 
 
-export default { createTeacher, fetchTeachers, fetchPendingApplication, approveApplication, fetchATeacher, blockTeacher, allClasses }
+export default { createTeacher, fetchTeachers, fetchPendingApplication, approveApplication, fetchATeacher, blockTeacher, allClasses, getAllChats, newChat, allPeople}

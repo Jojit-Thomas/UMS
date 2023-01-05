@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useContext, useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import logo from './logo.svg';
 import Home from './Pages/Home';
@@ -9,11 +9,13 @@ import TeacherRegister from './Pages/Teacher/Register';
 import TeacherLogin from './Pages/Teacher/Login';
 import TeacherIndex from './Pages/Teacher/Index';
 import TeacherHome from './Pages/Teacher/Home';
+import TeacherClassRoom from './Pages/Teacher/ClassRoom';
 //University
 import UniversityLogin from './Pages/University/Login';
 import UniversityIndex from './Pages/University/Index';
 import UniversityHome from './Pages/University/Home';
 import UniversityCourse from './Pages/University/Course';
+import UniversityCourseDetails from './Pages/University/CourseDetails';
 import UniversityCollege from './Pages/University/College';
 import UniversityNewCourse from './Pages/University/NewCourse';
 // Student
@@ -33,15 +35,29 @@ import CollegeNewDepartment from './Pages/College/NewDepartment';
 import CollegeDepartmentDetails from './Pages/College/DepartmentDetails';
 import CollegeTeacher from './Pages/College/Teacher';
 import CollegeStudent from './Pages/College/Student';
+import { userContext } from './utils/store';
 
 function App() {
+
+  const { setUser } = useContext(userContext)
+
+  useEffect(() => {
+    const user = localStorage.getItem("student")
+    if(user){
+      setUser(JSON.parse(user))
+    }
+  },[])
+
+
   return <Fragment>
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<Home />} />
+        <Route path='/' element={<Index />} />
+        <Route path='/links' element={<Home />} />
         <Route path='/university' element={<UniversityIndex />}>
           <Route index element={<UniversityHome />} />
           <Route path='course' element={<UniversityCourse />} />
+          <Route path='course/:course' element={<UniversityCourseDetails />} />
           <Route path='course/add' element={<UniversityNewCourse />} />
           <Route path='college' element={<UniversityCollege />} />
           <Route path='login' element={<UniversityLogin />} />
@@ -59,6 +75,7 @@ function App() {
           <Route path='application' element={<TeacherRegister />} />
           <Route path='login' element={<TeacherLogin />} />
           <Route path='register' element={<TeacherRegister />} />
+          <Route path=':department/:subject/:semester' element={<TeacherClassRoom />} />
           <Route path="*" element={<NotFound />} />
         </Route>
         <Route path='/college' element={<CollegeIndex/>}>

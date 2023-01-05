@@ -59,7 +59,7 @@ const verifyUniversity: RequestHandler = (req, res, next) => {
 const verifyCollege: RequestHandler = (req, res, next) => {
   try {
     const accessToken = req.headers.authorization;
-    if (!accessToken) throw createHttpError.BadRequest("Access Token is not provided");
+    if (!accessToken) throw createHttpError.BadRequest("ACCESS_TOKEN_NOTFOUND");
     const user = jwt.verify(accessToken, process.env.JWT_COLLEGE_ACCESS_TOKEN!)
     console.log("```user``` : ", user)
     req.user = user;
@@ -78,7 +78,7 @@ const verifyCollege: RequestHandler = (req, res, next) => {
 const verifyTeacher: RequestHandler = (req, res, next) => {
   try {
     const accessToken = req.headers.authorization;
-    if (!accessToken) throw createHttpError.BadRequest("Access Token is not provided");
+    if (!accessToken) throw createHttpError.BadRequest("ACCESS_TOKEN_NOTFOUND");
     const user = jwt.verify(accessToken, process.env.JWT_TEACHER_ACCESS_TOKEN!)
     console.log("```user``` : ", user)
     req.user = user;

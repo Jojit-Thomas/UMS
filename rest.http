@@ -244,9 +244,15 @@ Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb2xsZWdlSWQiOiJLTEFVTiIs
 ###
 
 PATCH http://localhost:4000/api/student/chat/add
-Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9qaXQgVGhvbWFzIiwiY291cnNlIjoiQi5UZWNoIiwiY2xhc3MiOiJLTEFVTkIuVGVjaDIwMjIiLCJpYXQiOjE2NzE2MTU0NTEsImV4cCI6MTY3MTcwMTg1MSwiYXVkIjoiam9qaXR0aG9tYXMuaW5mb0BnbWFpbC5jb20ifQ.9rlDcsAw_wkFKNdQAZu8xd-IEbhGB5NaNp2ZBqM_5GQ
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9qaXQgVGhvbWFzIiwiY291cnNlIjoiQi5UZWNoIiwiY2xhc3MiOiJLTEFVTkIuVGVjaDIwMjIiLCJpYXQiOjE2NzIwOTAyOTQsImV4cCI6MTY3MjE3NjY5NCwiYXVkIjoiam9qaXR0aG9tYXMuaW5mb0BnbWFpbC5jb20ifQ.BU7F_o_d5bkoHoVnXA2z7BBMmJqQbHHEHWYP_Oxnwj8
 Content-Type: application/json
 
 {
-    "message" : "hello hai"
+    "message" : "hello hai",
+    "subject" : "C++"
 }
+
+###
+
+GET http://localhost:4000/api/student/chat/all
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiSm9qaXQgVGhvbWFzIiwiY291cnNlIjoiQi5UZWNoIiwiY2xhc3MiOiJLTEFVTkIuVGVjaDIwMjIiLCJpYXQiOjE2NzIwOTAyOTQsImV4cCI6MTY3MjE3NjY5NCwiYXVkIjoiam9qaXR0aG9tYXMuaW5mb0BnbWFpbC5jb20ifQ.BU7F_o_d5bkoHoVnXA2z7BBMmJqQbHHEHWYP_Oxnwj8

@@ -58,8 +58,8 @@ const allStudents: RequestHandler = async (req, res, next) => {
 
 const blockStudent: RequestHandler = async (req, res, next) => {
   try {
-    const { email } = req.params
-    if (!email) throw createHttpError.BadRequest("Email is required")
+    const { email } = req.body;
+    if (!email) throw createHttpError.BadRequest("email param is required")
     const { isBlocked } = await studentDB.getStudentBlockStatus(email)
     await studentDB.blockStudents(email, isBlocked)
     res.sendStatus(204)
@@ -100,9 +100,10 @@ const allSubjects: RequestHandler = async (req, res, next) => {
   try {
     console.log(req.user)
     //@ts-ignore
-    let {sem} = await classDB.fetchClassDetails(req.user.class)
+    let { sem, collegeId } = await classDB.fetchClassDetails(req.user.classId)
     //@ts-ignore
-    let subjects = await collegeDB.getStudentSubjects(req.user.course, sem )
+    let subjects = await collegeDB.getStudentSubjects(req.user.course, sem, collegeId)
+    console.log(subjects)
     res.status(200).json(subjects)
     // res.send("All subjects will be provided")
   } catch (err: any) {
@@ -117,14 +118,14 @@ const allotment: RequestHandler = async (req, res, next) => {
     console.log(date)
     let studentApplication = await studentDB.getStudentApplicationAfterDate(date)
     let colleges = await collegeDB.fetchAllCollege();
-    let {selectedStudents, rejectedStudents} = assignToCollege(studentApplication, colleges)
+    let { selectedStudents, rejectedStudents } = assignToCollege(studentApplication, colleges)
     let classes = assignToClass(selectedStudents);
     classes.forEach(async (elem: any) => {
       await classDB.createClass(elem)
       // console.log(classes)
-      elem.students.forEach(async (student : any) => {
+      elem.students.forEach(async (student: any) => {
         let studentForm = await studentDB.fetchStudenAllotementDetails(student.email)
-        let newStudnet : Student = studentForm as never
+        let newStudnet: Student = studentForm as never
         newStudnet = newStudnet as Student
         newStudnet.isBlocked = false;
         newStudnet.classId = elem.classId;
@@ -139,24 +140,51 @@ const allotment: RequestHandler = async (req, res, next) => {
   }
 }
 
-const newChat:RequestHandler = async (req, res, next) => {
+const newChat: RequestHandler = async (req, res, next) => {
   try {
     console.log(req.user)
-    const {message} = req.body;
-    let chat : Chats = {
-      name : req.user.name,
-      email : req.user.aud,
-      date : new Date,
-      message : message
+    const { message, subject } = req.body;
+    let chat: Chats = {
+      name: req.user.name,
+      email: req.user.aud,
+      date: new Date,
+      subject: subject,
+      message: message
     }
-    await classDB.newChat(req.user.class, chat)
+    await classDB.newChat(req.user.classId, chat)
     res.sendStatus(204)
-  } catch(err : any) {
+  } catch (err: any) {
     res.status(err.status || 500).json(err.message || "Internal server error")
   }
 }
 
-export default { createStudentAllotment, createStudent, allStudents, blockStudent, getAStudent, admissionPayment, allSubjects, allotment, newChat }
+const getAllChats: RequestHandler = async (req, res, next) => {
+  try {
+    const { subject } = req.params
+    let chats = await classDB.allChats(req.user.classId, subject)
+    res.status(200).json(chats)
+  } catch (err: any) {
+    res.status(err.status || 500).json(err.message || "Internal server error")
+  }
+}
+
+const allPeople: RequestHandler = async (req, res, next) => {
+  try {
+    const { classId, course } = req.user;
+    const {subject} = req.params;
+    console.log("subject : ",subject)
+    let students = await classDB.allStudents(classId)
+    //@ts-ignore
+    let teachers = await collegeDB.findTeacherInClass(students.collegeId, course, students.sem, subject)
+    console.log(teachers)
+    res.status(200).json({students : students.students, teachers : teachers[0]?.teacher})
+  } catch (err: any) {
+    console.log(err)
+    res.status(err.status || 500).json(err.message || "Internal server error")
+  }
+}
+
+export default { createStudentAllotment, createStudent, allStudents, blockStudent, getAStudent, admissionPayment, allSubjects, allotment, newChat, getAllChats, allPeople }
 
 function assignToCollege(students: studentApplicationFormType[], colleges: College[]) {
   const selectedStudents = []
@@ -178,20 +206,20 @@ function assignToCollege(students: studentApplicationFormType[], colleges: Colle
       if (department!.seats[yearIndex!].seats < department?.maxCandidate!) {
         // Accept the student to the department and decrease the number of available seats
         department!.seats[yearIndex!].seats++;
-        selectedStudents.push({collegeId : college?.collegeId, course : department?.name, name : student.name, email : student.email})
+        selectedStudents.push({ collegeId: college?.collegeId, course: department?.name, name: student.name, email: student.email })
         break;
       } else {
-        if(preference.preference === 3) {
-          rejectedStudents.push({name : student.name, email : student.email})
+        if (preference.preference === 3) {
+          rejectedStudents.push({ name: student.name, email: student.email })
         }
       }
     }
   }
-  return {selectedStudents, rejectedStudents};
+  return { selectedStudents, rejectedStudents };
 }
 
 
-function assignToClass(students : any) {
+function assignToClass(students: any) {
   // Create an object to store the classes
   const classes: any = {};
 
@@ -205,15 +233,15 @@ function assignToClass(students : any) {
       classes[key] = {
         collegeId: student.collegeId,
         course: student.course,
-        classId : `${student.collegeId + student.course + moment(new Date).year()}`,
-        year : moment(new Date).year(),
-        sem : 1,
+        classId: `${student.collegeId + student.course + moment(new Date).year()}`,
+        year: moment(new Date).year(),
+        sem: 1,
         students: [],
       };
     }
 
     // Push the student's name to the class's students array
-    classes[key].students.push({name : student.name, email : student.email});
+    classes[key].students.push({ name: student.name, email: student.email });
   }
 
   // Convert the object of classes into an array

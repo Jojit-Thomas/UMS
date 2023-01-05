@@ -9,6 +9,7 @@ interface Student {
 export interface Chats {
   name : string,
   email : string,
+  subject : string,
   date : Date,
   message : string,
 }
@@ -39,9 +40,10 @@ const studentSchema = new mongoose.Schema({
 const chatSchema = new mongoose.Schema({
   name : String,
   email : String,
+  subject : String,
   date : Date,
   message : String
-})
+}, {_id : false})
 
 const classSchema = new mongoose.Schema({
   year: Number,

@@ -12,7 +12,7 @@ function Header({ user, logout }: { user: string, logout: () => void }) {
     <HeaderContainer>
       <Paper elevation={4} square={true} sx={{ width: "100%" }} >
         <Box width="100%" height="100%" display="grid" alignItems="center" justifyContent="center" >
-          <Box display="flex" height="100%" ><h3 style={{ "color": "#666", "marginRight": "0.3rem" }}>College </h3><Title>Dashboard</Title></Box>
+          <div className='flex h-full'  ><h3 className='color-[#666] mr-1 my-auto'>College </h3><Title className='my-auto'>Dashboard</Title></div>
         </Box>
       </Paper>
     </HeaderContainer>

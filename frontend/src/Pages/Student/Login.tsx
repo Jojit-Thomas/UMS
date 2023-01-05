@@ -28,8 +28,7 @@ function Login() {
         console.log("success : ", result);
         localStorage.setItem("studentAccessToken", result.data.accessToken);
         localStorage.setItem("studentRefreshToken", result.data.refreshToken);
-        localStorage.setItem("studentName", result.data.user);
-        localStorage.setItem("studentClass", result.data.classId);
+        localStorage.setItem("student", JSON.stringify(result.data.user));
         navigate('/student')
       })
       .catch((error) => {

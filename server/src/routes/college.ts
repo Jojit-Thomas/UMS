@@ -20,7 +20,7 @@ router.get('/department/all', auth.verifyCollege, college.fetchAllDepartment)
 
 router.get('/student/all', student.allStudents)
 
-router.patch('/student/:email/block', student.blockStudent);
+router.patch('/student/block', student.blockStudent);
 
 router.get('/student/:email', student.getAStudent)
 
@@ -37,6 +37,7 @@ router.get('/department/:department', auth.verifyCollege, college.fetchADepartme
 router.put('/department/edit', auth.verifyCollege, college.updateDepartment)
 
 router.patch('/teacher/block', auth.verifyCollege, teacher.blockTeacher)
+
 
 // router.get()
 

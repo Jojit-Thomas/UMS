@@ -1,3 +1,4 @@
+
 import { Attachment, EmojiEmotions, MoreVert, Send } from '@mui/icons-material'
 import { Box, Grid, Paper, TextField, Tooltip } from '@mui/material'
 import axios from './axios'
@@ -24,7 +25,7 @@ interface Student {
 }
 
 const ClassRoom = () => {
-  const { classId, subject } = useParams()
+  const { department, subject, semester } = useParams()
 
   const [input, setInput] = useState("");
 
@@ -39,12 +40,12 @@ const ClassRoom = () => {
   let regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
 
   useEffect(() => {
-    axios.get(`/student/chat/${subject}`).then(res => {
+    axios.get(`/teacher/chat/${department}/${subject}/${semester}`).then(res => {
       console.log(res.data)
       setChats(res.data)
     })
 
-    axios.get(`/student/people/all/${subject}`).then(res => {
+    axios.get(`/teacher/people/all/${department}/${subject}/${semester}`).then(res => {
       console.log(res.data)
       // setChats(res.data)
       setTeacher(res.data.teachers)
@@ -59,7 +60,7 @@ const ClassRoom = () => {
       toast("Message is empty", errorToastOptions)
       return
     }
-    axios.patch("/student/chat/add", { message: input, subject: subject }).then(() => setInput(""))
+    axios.patch("/teacher/chat/add", { message: input, subject: subject, department: department, semester : semester }).then(() => setInput(""))
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -168,9 +169,6 @@ const ChatBubble = ({ chat }: { chat: Chat }) => {
 
   const { user } = useContext(userContext)
 
-  useEffect(() => {
-    console.log(user)
-  }, [])
 
   if (chat.email === user?.email) {
     return (

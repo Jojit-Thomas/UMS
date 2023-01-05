@@ -25,10 +25,10 @@ const studentLogin: RequestHandler = async (req, res, next) => {
     let isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) throw createHttpError.Unauthorized("Email or Password is wrong")
     if (user.isBlocked) throw createHttpError.Unauthorized("You are blocked by the admin")
-    let accessToken = jwt.sign({ name: user.name, course: user.course, class: user.classId }, process.env.JWT_ACCESS_TOKEN!, { expiresIn: "24h", audience: user.email });
-    let refreshToken = jwt.sign({ name: user.name, course: user.course, class: user.classId }, process.env.JWT_REFRESH_TOKEN!, { expiresIn: "180d", audience: user.email });
+    let accessToken = jwt.sign({ name: user.name, course: user.course, classId: user.classId }, process.env.JWT_ACCESS_TOKEN!, { expiresIn: "24h", audience: user.email });
+    let refreshToken = jwt.sign({ name: user.name, course: user.course, classId: user.classId }, process.env.JWT_REFRESH_TOKEN!, { expiresIn: "180d", audience: user.email });
     client.SET(user.email, refreshToken, { EX: 180 * 24 * 60 * 60 })
-    res.status(200).json({ accessToken, refreshToken, user: user.name, classId: user.classId })
+    res.status(200).json({ accessToken, refreshToken, user: { name: user.name, classId: user.classId, email : user.email } })
   } catch (err: any) {
     if (err.status >= 400 && err.status < 500) {
       res.status(err.status).json(err.message);
@@ -63,7 +63,7 @@ const teacherLogin: RequestHandler = async (req, res, next) => {
     console.log(teacher)
     let isPasswordValid = await bcrypt.compare(password, teacher.password)
     if (!isPasswordValid) throw createHttpError.Unauthorized("Email or Password is wrong")
-    let accessToken = jwt.sign({collegeId: teacher.collegeId}, process.env.JWT_TEACHER_ACCESS_TOKEN!, { expiresIn: "24h", audience: teacher.email });
+    let accessToken = jwt.sign({ collegeId: teacher.collegeId, name: teacher.name }, process.env.JWT_TEACHER_ACCESS_TOKEN!, { expiresIn: "24h", audience: teacher.email });
     res.status(200).json({ accessToken })
   } catch (err: any) {
     if (err.status >= 400 && err.status < 500) {

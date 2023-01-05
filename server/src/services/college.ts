@@ -114,11 +114,12 @@ const createCourse = (collegeId: string, department: Department): Promise<void> 
   })
 }
 
-const getStudentSubjects = (department: string, sem: number): Promise<any> => {
+const getStudentSubjects = (department: string, sem: number, collegeId: string): Promise<any> => {
   return new Promise((resolve, reject) => {
     collegeModel.aggregate([
       {
         $match: {
+          collegeId: collegeId,
           "department.name": department,
           "department.semesters.sem": sem
         }
@@ -131,7 +132,7 @@ const getStudentSubjects = (department: string, sem: number): Promise<any> => {
       },
       {
         $match: {
-          "department.semesters.sem": 2
+          "department.semesters.sem": sem
         }
       },
       {
@@ -140,7 +141,10 @@ const getStudentSubjects = (department: string, sem: number): Promise<any> => {
           subjects: "$department.semesters.subjects"
         }
       }
-    ]).then((subjects) => resolve(subjects[0])).catch(err => {
+    ]).then((subjects) => {
+      // console.log(subjects)
+      resolve(subjects[0])
+    }).catch(err => {
       console.log(err)
       reject(createHttpError.InternalServerError())
     })
@@ -173,10 +177,45 @@ const getAllTeachingSubjects = (name: string) => {
         }
       }
     ]).then((teachingSubjects) => resolve(teachingSubjects)).catch(err => {
-        console.log(err)
-        reject(createHttpError.InternalServerError())
-      })
+      console.log(err)
+      reject(createHttpError.InternalServerError())
+    })
   })
 }
 
-export default { createCollege, fetchApprovedCollege, invertApproval, fetchAllCollege, fetchACollege, fetchAllDepartment, createCourse, fetchADepartment, updateDepartment, getStudentSubjects, getAllTeachingSubjects }
+const findTeacherInClass = (collegeId : string, course : string, sem : number, subject : string) => {
+  return new Promise((resolve, reject) => {
+    collegeModel.aggregate([
+      {
+        $match: {collegeId : collegeId}
+      },
+      {
+        $unwind: "$department"
+      },
+      {
+        $unwind: "$department.semesters"
+      },
+      {
+        $unwind: "$department.semesters.subjects"
+      },
+      {
+        $match: {
+          "department.name": course,
+          "department.semesters.sem": sem,
+          "department.semesters.subjects.name": subject
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          teacher: "$department.semesters.subjects.teacher"
+        }
+      }
+    ]).then((teachers) => resolve(teachers)).catch(err => {
+      console.log(err);
+      reject(createHttpError.InternalServerError())
+    })
+  })
+}
+
+export default { createCollege, fetchApprovedCollege, invertApproval, fetchAllCollege, fetchACollege, fetchAllDepartment, createCourse, fetchADepartment, updateDepartment, getStudentSubjects, getAllTeachingSubjects, findTeacherInClass }
