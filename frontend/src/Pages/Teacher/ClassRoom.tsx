@@ -1,6 +1,6 @@
 
 import { Attachment, EmojiEmotions, MoreVert, Send } from '@mui/icons-material'
-import { Box, Grid, Paper, TextField, Tooltip } from '@mui/material'
+import { Box, Button, Grid, Modal, Paper, TextField, Tooltip } from '@mui/material'
 import axios from './axios'
 import React, { Fragment, useContext, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -10,13 +10,22 @@ import 'react-toastify/dist/ReactToastify.css';
 import { errorToastOptions } from '../../utils/react-toastify'
 import Header from './Components/Header'
 import moment from 'moment'
-import { userContext } from '../../utils/store'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '../../utils/store'
+import { invertModalOpen } from './teacherSlice'
 
 interface Chat {
   name: string,
-  email: string,
+  userId: string,
   date: string,
   message: string,
+}
+
+interface ClassEvents {
+  message: string,
+  subject: string,
+  url: string,
+  date: Date
 }
 
 interface Student {
@@ -31,27 +40,36 @@ const ClassRoom = () => {
 
   const [chats, setChats] = useState<Chat[]>([])
 
+  const [events, setEvents] = useState<ClassEvents[]>([])
+
   const [teacher, setTeacher] = useState();
 
   const [students, setStudents] = useState<Student[]>([]);
+
+  const [classId, setClassId] = useState("");
 
   useEffect(() => console.log(input), [input])
 
   let regex = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
 
   useEffect(() => {
+    axios.get(`/teacher/people/all/${department}/${subject}/${semester}`).then(res => {
+      console.log("people : ", res.data)
+      // setChats(res.data)
+      setTeacher(res.data.teachers)
+      setStudents(res.data.details.students)
+      setClassId(res.data.details.classId)
+    })
+
     axios.get(`/teacher/chat/${department}/${subject}/${semester}`).then(res => {
       console.log(res.data)
       setChats(res.data)
     })
 
-    axios.get(`/teacher/people/all/${department}/${subject}/${semester}`).then(res => {
+    axios.get(`/teacher/events/${department}/${subject}/${semester}`).then(res => {
       console.log(res.data)
-      // setChats(res.data)
-      setTeacher(res.data.teachers)
-      setStudents(res.data.students)
+      setEvents(res.data)
     })
-
   }, [])
 
   const handleSubmit = () => {
@@ -60,7 +78,7 @@ const ClassRoom = () => {
       toast("Message is empty", errorToastOptions)
       return
     }
-    axios.patch("/teacher/chat/add", { message: input, subject: subject, department: department, semester : semester }).then(() => setInput(""))
+    axios.patch("/teacher/chat/add", { message: input, subject : subject, classId : classId }).then(() => setInput(""))
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -83,7 +101,16 @@ const ClassRoom = () => {
         <div className='w-full h-5/6 sm:h-3/4 grid grid-cols-1 sm:grid-cols-4 p-2'>
           <div className='w-full p-3'>
             <div className='w-11/12 h-full m-auto border-dashed border-2 border-sky-500 rounded-lg lg:h-5/6'>
-              <h2 className='mt-3 text-center text-gray-600 font-semibold text-2xl'>Events</h2>
+              <h2 className='mt-3 text-center text-gray-600 font-semibold text-2xl border-b-2'>Events</h2>
+              {
+                events.map(event => {
+                  return (
+                    <div className='mx-3 flex mt-2'>
+                      <p className='w-full truncate'>{event.message} : <a href={event.url} className="text-blue-600">{event.url}</a></p>
+                    </div>
+                  )
+                })
+              }
             </div>
           </div>
           <div className='col-span-3 w-full h-[80vh] sm:h-[70vh]'>
@@ -116,7 +143,7 @@ const ClassRoom = () => {
             <div className='p-4'>
               {
                 teacher && <div className='grid grid-cols-6 mt-3'>
-                  <div className="w-10 h-10 bg-slate-700 rounded-full"></div>
+                  <img src={`https://api.multiavatar.com/${teacher}.png`} className='w-10 h-10 my-auto' alt="" />
                   <div className=' my-auto mr-auto col-span-4 w-full'>
                     <h3 className=' text-white truncate w-full' >{teacher}</h3>
                     <span className='text-white text-sm'>Teacher</span>
@@ -128,7 +155,7 @@ const ClassRoom = () => {
                 students.map(student => {
                   return (
                     <div className='grid grid-cols-6 mt-3'>
-                      <div className="w-10 h-10 bg-slate-700 rounded-full"></div>
+                      <img src={`https://api.multiavatar.com/${student.name}.png`} className='w-10 h-10 my-auto' alt="" />
                       <h3 className='col-span-4  my-auto mr-auto text-white truncate w-full' >{student.name}</h3>
                       <MoreVert className='text-white m-auto' />
                     </div>
@@ -137,6 +164,7 @@ const ClassRoom = () => {
               }
             </div>
           </div>
+          <ModalBox />
         </div>
       </div>
       <ToastContainer />
@@ -144,33 +172,76 @@ const ClassRoom = () => {
   )
 }
 
-const Message = styled.div`
-  padding : 0rem 2rem 0rem 2rem;
-`
+const ModalBox = () => {
+  const { department, subject, semester } = useParams()
+  const isModalOpen = useSelector((state: RootState) => state.teacher.isNewClassModalOpen)
+  const dispatch = useDispatch();
+  const [message, setMessage] = useState("");
+  const [url, setUrl] = useState("");
+  useEffect(() => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < 6; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    const url = `https://jojit.ml/lobby?roomId=${result}`
+    navigator.clipboard.writeText(url);
+    setUrl(url)
+  }, [])
 
-const Circle = styled.div`
-  width : 2.5rem;
-  height : 2.5rem;
-  background-color : #EBEBEB;
-  border-radius : 100px;
-  margin : auto
-`
+  const handleSubmit = () => {
+    if (!message) {
+      toast.error("message is empty", errorToastOptions)
+      return;
+    }
+    axios.patch(`/teacher/event/new/${department}/${semester}`, { message: message, url: url, subject: subject }).then(() => window.open(url, "_blank"))
+  }
 
-const ChatBar = styled.div`
-  width : 100%;
-  // height : 3.3rem;
-  background-color : #fff;
-  display : flex;
-`
+  return (
+    <Modal
+      open={isModalOpen}
+      onClose={() => dispatch(invertModalOpen())}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <div className='w-screen h-screen flex justify-center align-middle'>
+        <div className='h-2/5 w-3/4 md:w-1/4 bg-slate-50 my-auto px-5 pt-3 rounded-md'>
+          <h2 className='text-xl text-center'>Meetin</h2>
+          <TextField
+            id="outlined-error-helper-text"
+            value={url}
+            disabled
+            label="Meet Link"
+            fullWidth
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)}
+            sx={{ "margin": "10px 0px" }}
+          />
+          <TextField
+            id="outlined-error-helper-text"
+            label="Message"
+            fullWidth
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMessage(e.target.value)}
+            sx={{ "margin": "10px 0px" }}
+          />
+          <div className='flex justify-between'>
+            <Button variant='outlined' onClick={() => dispatch(invertModalOpen())} >Cancel</Button>
+            <Button variant='contained' onClick={() => handleSubmit()} >Continue</Button>
+          </div>
+        </div>
+      </div>
+    </Modal>
+  )
+}
+
 
 export default ClassRoom
 
 const ChatBubble = ({ chat }: { chat: Chat }) => {
 
-  const { user } = useContext(userContext)
+  const user = useSelector((state: RootState) => state.teacher.details)
+  // console.log(chat.userId, user.id)
 
-
-  if (chat.email === user?.email) {
+  if (chat.userId === user?.id) {
     return (
       <div className="flex mb-6 flex-row-reverse pr-3">
         <div className=' relative'>
@@ -180,7 +251,7 @@ const ChatBubble = ({ chat }: { chat: Chat }) => {
               {chat.message}
             </div>
             <Tooltip title={chat.name} placement="top" >
-              <div className='w-9 h-9 mt-auto rounded-full bg-slate-700'></div>
+              <img src={`https://api.multiavatar.com/${chat.name}.png`} className='w-10 h-10 my-auto' alt="" />
             </Tooltip>
           </div>
           <span className='text-xs truncate overflow-hidden inline-block absolute -bottom-4 right-12'>{handleDate(chat.date)}</span>
@@ -197,7 +268,7 @@ const ChatBubble = ({ chat }: { chat: Chat }) => {
               {chat.message}
             </div>
             <Tooltip title={chat.name} placement="top" >
-              <div className='w-9 h-9 mt-auto rounded-full bg-slate-700'></div>
+              <img src={`https://api.multiavatar.com/${chat.name}.png`} className='w-10 h-10 my-auto' alt="" />
             </Tooltip>
           </div>
           <span className='text-xs truncate overflow-hidden inline-block absolute -bottom-4 left-12'>{handleDate(chat.date)}</span>
@@ -228,3 +299,22 @@ const handleDate = (dateString: string) => {
   const date = new Date(dateString)
   return moment(date).fromNow();
 }
+
+const Message = styled.div`
+    padding : 0rem 2rem 0rem 2rem;
+  `
+
+const Circle = styled.div`
+    width : 2.5rem;
+    height : 2.5rem;
+    background-color : #EBEBEB;
+    border-radius : 100px;
+    margin : auto
+  `
+
+const ChatBar = styled.div`
+    width : 100%;
+    // height : 3.3rem;
+    background-color : #fff;
+    display : flex;
+  `

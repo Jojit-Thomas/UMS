@@ -6,11 +6,16 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use((config) => {
-  const studentAccessToken = localStorage.getItem("studentAccessToken");
-  //checking if studentAccessToken exists
-  if (studentAccessToken) {
-    config.headers = config.headers ?? {};
-    config.headers["authorization"] = studentAccessToken;
+  const local = localStorage.getItem("student");
+  if (local) {
+    //@ts-ignore
+    const accessToken = JSON.parse(local).accessToken
+    console.log(local, accessToken)
+    //checking if accessToken exists
+    if (accessToken != null) {
+      config.headers = config.headers ?? {};
+      config.headers["authorization"] = accessToken;
+    }
   }
   return config;
 });

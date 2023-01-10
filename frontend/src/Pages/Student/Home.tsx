@@ -7,15 +7,20 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
-import { CardActionArea, Grid } from '@mui/material';
+import { CardActionArea, Grid, Tooltip } from '@mui/material';
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components';
 import BoookImg from "../../assets/book.webp"
+import MainHeader from './Components/MainHeader';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../utils/store';
 
 
 const Home = () => {
   const [subjects, setSubjects] = useState([]);
-  const classId = localStorage.getItem("studentClass")
+
+  const classId = useSelector((state : RootState) => state.student.details.classId)
+
   useEffect(() => {
     axios.get("/student/subject/all").then((res) => {
       console.log(res)
@@ -24,15 +29,18 @@ const Home = () => {
 
   }, [])
   return (
-    <div className='grid grid-cols-6 ' >
-      {
-        subjects.map(obj => {
-          return (
-            //@ts-ignore
-            <ImageCard title={obj.name} description={obj.name} url={`/student/${classId}/${obj.name}`} />
-          )
-        })
-      }
+    <div>
+      <MainHeader/>
+      <div className='grid grid-cols-6 ' >
+        {
+          subjects.map(obj => {
+            return (
+              //@ts-ignore
+              <ImageCard title={obj.name} description={obj.name} url={`/student/${classId}/${obj.name}`} />
+            )
+          })
+        }
+      </div>
     </div>
   )
 }
@@ -54,12 +62,14 @@ function ImageCard({ title, description, url }: { title: string, description?: s
             alt="green iguana"
           />
           <CardContent>
-            <Typography gutterBottom variant="h5" component="div" textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap" >
+            <Typography gutterBottom variant="h5" component="div" textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap" onClick={() => navigate(url)} >
               {title}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {description && description}
-            </Typography>
+            <Tooltip title={description} placement='top'>
+              <Typography variant="body2" color="text.secondary" className='w-full truncate'>
+                {description && description}
+              </Typography>
+            </Tooltip>
           </CardContent>
         </CardActionArea>
       </Card>

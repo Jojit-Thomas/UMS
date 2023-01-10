@@ -6,7 +6,7 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use((config) => {
-  const collegeAccessToken = localStorage.getItem("collegeAccessToken");
+  const collegeAccessToken = localStorage.getItem("college");
   //checking if collegeAccessToken exists
   if (collegeAccessToken) {
     config.headers = config.headers ?? {};

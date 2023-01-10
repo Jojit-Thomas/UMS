@@ -144,9 +144,10 @@ const newChat: RequestHandler = async (req, res, next) => {
   try {
     console.log(req.user)
     const { message, subject } = req.body;
+    console.log(req.user)
     let chat: Chats = {
       name: req.user.name,
-      email: req.user.aud,
+      userId: req.user.id,
       date: new Date,
       subject: subject,
       message: message
@@ -171,52 +172,130 @@ const getAllChats: RequestHandler = async (req, res, next) => {
 const allPeople: RequestHandler = async (req, res, next) => {
   try {
     const { classId, course } = req.user;
-    const {subject} = req.params;
-    console.log("subject : ",subject)
-    let students = await classDB.allStudents(classId)
+    const { subject } = req.params;
+    console.log("subject : ", subject)
+    let students = await classDB.findAllStudentsByClassId(classId)
     //@ts-ignore
     let teachers = await collegeDB.findTeacherInClass(students.collegeId, course, students.sem, subject)
     console.log(teachers)
-    res.status(200).json({students : students.students, teachers : teachers[0]?.teacher})
+    res.status(200).json({ students: students.students, teachers: teachers[0]?.teacher })
   } catch (err: any) {
     console.log(err)
     res.status(err.status || 500).json(err.message || "Internal server error")
   }
 }
 
-export default { createStudentAllotment, createStudent, allStudents, blockStudent, getAStudent, admissionPayment, allSubjects, allotment, newChat, getAllChats, allPeople }
+const getAllEvents: RequestHandler = async (req, res, next) => {
+  try {
+    const { subject } = req.params
+    let events = await classDB.allEvents(req.user.classId, subject)
+    res.status(200).json(events)
+  } catch (err) {
+    let error = err as createHttpError.HttpError
+    res.status(error.status || 500).json(error.message || "Internal server error")
+  }
+}
+
+const getAllAllotmentThisYear: RequestHandler = async (req, res, next) => {
+  try {
+    let allotment = await studentDB.allStudentAllotmentThisYear();
+    // console.log(allotment)
+    res.status(200).json(allotment)
+  } catch (err) {
+    let error = err as createHttpError.HttpError
+    res.status(error.status || 500).json(error.message || "Internal server error")
+  }
+}
+
+const blockStudentApplicants: RequestHandler = async (req, res, next) => {
+  try {
+    // console.log("block students")
+    let user = await studentDB.fetchAStudentApplicant(req.body._id)
+    console.log(req.body._id, user)
+    let isBlocked = user.isBlocked as boolean
+    await studentDB.invertBlockStudentApplication(req.body._id, isBlocked)
+    // console.log(allotment)
+    res.sendStatus(204)
+  } catch (err) {
+    let error = err as createHttpError.HttpError
+    console.log(error)
+    res.status(error.status || 500).json(error.message || "Internal server error")
+  }
+}
+
+
+
+export default { createStudentAllotment, createStudent, allStudents, blockStudent, getAStudent, admissionPayment, allSubjects, allotment, newChat, getAllChats, allPeople, getAllEvents, getAllAllotmentThisYear, blockStudentApplicants }
+
+// function assignToCollege(students: studentApplicationFormType[], colleges: College[]) {
+//   const selectedStudents = []
+//   const rejectedStudents = []
+//   // Sort the students array in descending order by their marks
+//   students.sort((a, b) => b.totalMark - a.totalMark);
+//   for (let student of students) {
+//     // Iterate over the student's admission preferences
+//     for (let preference of student.admissionPreference) {
+//       // Find the corresponding college object
+//       let college = colleges.find(c => c.collegeId === preference.collegeId);
+
+//       // Find the corresponding department object
+//       let department = college!.department.find(d => d.name === preference.course);
+
+//       // Check if there are any available seats in the department
+//       let yearIndex = department?.seats.findIndex(x => x.year === moment(new Date).year())
+//       console.log(department!.seats[yearIndex!].seats)
+//       if (department!.seats[yearIndex!].seats < department?.maxCandidate!) {
+//         // Accept the student to the department and decrease the number of available seats
+//         department!.seats[yearIndex!].seats++;
+//         selectedStudents.push({ collegeId: college?.collegeId, course: department?.name, name: student.name, email: student.email })
+//         break;
+//       } else {
+//         if (preference.preference === 3) {
+//           rejectedStudents.push({ name: student.name, email: student.email })
+//         }
+//       }
+//     }
+//   }
+//   return { selectedStudents, rejectedStudents };
+// }
 
 function assignToCollege(students: studentApplicationFormType[], colleges: College[]) {
   const selectedStudents = []
   const rejectedStudents = []
+  // Create a hash map to store the college and department objects
+  const collegeMap = new Map();
+  for (const college of colleges) {
+    for (const department of college.department) {
+      const key = `${college.collegeId}-${department.name}`;
+      collegeMap.set(key, { college, department });
+    }
+  }
   // Sort the students array in descending order by their marks
   students.sort((a, b) => b.totalMark - a.totalMark);
   for (let student of students) {
     // Iterate over the student's admission preferences
     for (let preference of student.admissionPreference) {
-      // Find the corresponding college object
-      let college = colleges.find(c => c.collegeId === preference.collegeId);
-
-      // Find the corresponding department object
-      let department = college!.department.find(d => d.name === preference.course);
-
+      // Find the corresponding college and department objects using the hash map
+      const key = `${preference.collegeId}-${preference.course}`;
+      const { college, department } = collegeMap.get(key) || {};
+      if (!department) continue;
       // Check if there are any available seats in the department
-      let yearIndex = department?.seats.findIndex(x => x.year === moment(new Date).year())
-      console.log(department!.seats[yearIndex!].seats)
-      if (department!.seats[yearIndex!].seats < department?.maxCandidate!) {
+      let yearIndex = department.seats.findIndex(x => x.year === moment(new Date).year())
+      if (department.seats[yearIndex].seats < department.maxCandidate) {
         // Accept the student to the department and decrease the number of available seats
-        department!.seats[yearIndex!].seats++;
-        selectedStudents.push({ collegeId: college?.collegeId, course: department?.name, name: student.name, email: student.email })
+        department.seats[yearIndex].seats++;
+        selectedStudents.push({ collegeId: college.collegeId, course: department.name, name: student.name, email: student.email });
         break;
       } else {
         if (preference.preference === 3) {
-          rejectedStudents.push({ name: student.name, email: student.email })
+          rejectedStudents.push({ name: student.name, email: student.email });
         }
       }
     }
   }
   return { selectedStudents, rejectedStudents };
 }
+
 
 
 function assignToClass(students: any) {

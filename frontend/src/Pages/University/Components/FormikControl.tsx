@@ -2,7 +2,7 @@ import React from 'react'
 import FormikInput from './FormikInput'
 
 
-const FormikControl = <T extends any[]>(props: { control: string, rest: T }) => {
+const FormikControl = (props: any) => {
   const { control, ...rest } = props
   switch (control) {
     case 'input': return <FormikInput {...rest} />

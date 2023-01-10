@@ -5,6 +5,7 @@ import dotenv from "dotenv"
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 import { connectRedis } from "../config/redis";
 import createHttpError from "http-errors";
+import { Teacher } from "../@types/global";
 const client = connectRedis();
 
 
@@ -60,9 +61,9 @@ const verifyCollege: RequestHandler = (req, res, next) => {
   try {
     const accessToken = req.headers.authorization;
     if (!accessToken) throw createHttpError.BadRequest("ACCESS_TOKEN_NOTFOUND");
-    const user = jwt.verify(accessToken, process.env.JWT_COLLEGE_ACCESS_TOKEN!)
-    console.log("```user``` : ", user)
-    req.user = user;
+    const college = jwt.verify(accessToken, process.env.JWT_COLLEGE_ACCESS_TOKEN!)
+    console.log("```college``` : ", college)
+    req.college = college;
     next()
   } catch (e: any) {
     console.table(e)
@@ -81,7 +82,7 @@ const verifyTeacher: RequestHandler = (req, res, next) => {
     if (!accessToken) throw createHttpError.BadRequest("ACCESS_TOKEN_NOTFOUND");
     const user = jwt.verify(accessToken, process.env.JWT_TEACHER_ACCESS_TOKEN!)
     console.log("```user``` : ", user)
-    req.user = user;
+    req.teacher = user as Teacher;
     next()
   } catch (e: any) {
     console.table(e)

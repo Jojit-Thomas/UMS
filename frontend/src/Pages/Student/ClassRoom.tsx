@@ -9,13 +9,21 @@ import 'react-toastify/dist/ReactToastify.css';
 import { errorToastOptions } from '../../utils/react-toastify'
 import Header from './Components/Header'
 import moment from 'moment'
-import { userContext } from '../../utils/store'
+import { RootState } from '../../utils/store'
+import { useSelector } from 'react-redux'
 
 interface Chat {
   name: string,
-  email: string,
+  userId: string,
   date: string,
   message: string,
+}
+
+interface ClassEvents {
+  message: string,
+  subject: string,
+  url: string,
+  date: Date
 }
 
 interface Student {
@@ -30,6 +38,8 @@ const ClassRoom = () => {
 
   const [chats, setChats] = useState<Chat[]>([])
 
+  const [events, setEvents] = useState<ClassEvents[]>([])
+
   const [teacher, setTeacher] = useState();
 
   const [students, setStudents] = useState<Student[]>([]);
@@ -42,6 +52,11 @@ const ClassRoom = () => {
     axios.get(`/student/chat/${subject}`).then(res => {
       console.log(res.data)
       setChats(res.data)
+    })
+
+    axios.get(`/student/events/${subject}`).then(res => {
+      console.log("events : ", res.data)
+      setEvents(res.data)
     })
 
     axios.get(`/student/people/all/${subject}`).then(res => {
@@ -82,7 +97,16 @@ const ClassRoom = () => {
         <div className='w-full h-5/6 sm:h-3/4 grid grid-cols-1 sm:grid-cols-4 p-2'>
           <div className='w-full p-3'>
             <div className='w-11/12 h-full m-auto border-dashed border-2 border-sky-500 rounded-lg lg:h-5/6'>
-              <h2 className='mt-3 text-center text-gray-600 font-semibold text-2xl'>Events</h2>
+              <h2 className='mt-3 text-center text-gray-600 font-semibold text-2xl border-b-2'>Events</h2>
+              {
+                events.map(event => {
+                  return (
+                    <div className='mx-3 flex mt-2'>
+                      <p className='w-full truncate'>{event.message} : <a href={event.url} className="text-blue-600">{event.url}</a></p>
+                    </div>
+                  )
+                })
+              }
             </div>
           </div>
           <div className='col-span-3 w-full h-[80vh] sm:h-[70vh]'>
@@ -115,7 +139,7 @@ const ClassRoom = () => {
             <div className='p-4'>
               {
                 teacher && <div className='grid grid-cols-6 mt-3'>
-                  <div className="w-10 h-10 bg-slate-700 rounded-full"></div>
+                  <img src={`https://api.multiavatar.com/${teacher}.png`} className='w-10 h-10 my-auto' alt="" />
                   <div className=' my-auto mr-auto col-span-4 w-full'>
                     <h3 className=' text-white truncate w-full' >{teacher}</h3>
                     <span className='text-white text-sm'>Teacher</span>
@@ -127,7 +151,7 @@ const ClassRoom = () => {
                 students.map(student => {
                   return (
                     <div className='grid grid-cols-6 mt-3'>
-                      <div className="w-10 h-10 bg-slate-700 rounded-full"></div>
+                      <img src={`https://api.multiavatar.com/${student.name}.png`} className='w-10 h-10 my-auto' alt="" />
                       <h3 className='col-span-4  my-auto mr-auto text-white truncate w-full' >{student.name}</h3>
                       <MoreVert className='text-white m-auto' />
                     </div>
@@ -166,13 +190,13 @@ export default ClassRoom
 
 const ChatBubble = ({ chat }: { chat: Chat }) => {
 
-  const { user } = useContext(userContext)
+  const user = useSelector((state: RootState) => state.student.details)
 
   useEffect(() => {
-    console.log(user)
+    console.log(chat.userId, user.id)
   }, [])
 
-  if (chat.email === user?.email) {
+  if (chat.userId === user?.id) {
     return (
       <div className="flex mb-6 flex-row-reverse pr-3">
         <div className=' relative'>
@@ -182,7 +206,7 @@ const ChatBubble = ({ chat }: { chat: Chat }) => {
               {chat.message}
             </div>
             <Tooltip title={chat.name} placement="top" >
-              <div className='w-9 h-9 mt-auto rounded-full bg-slate-700'></div>
+              <img src={`https://api.multiavatar.com/${chat.name}.png`} className='w-10 h-10 my-auto' alt="" />
             </Tooltip>
           </div>
           <span className='text-xs truncate overflow-hidden inline-block absolute -bottom-4 right-12'>{handleDate(chat.date)}</span>
@@ -199,7 +223,7 @@ const ChatBubble = ({ chat }: { chat: Chat }) => {
               {chat.message}
             </div>
             <Tooltip title={chat.name} placement="top" >
-              <div className='w-9 h-9 mt-auto rounded-full bg-slate-700'></div>
+              <img src={`https://api.multiavatar.com/${chat.name}.png`} className='w-10 h-10 my-auto' alt="" />
             </Tooltip>
           </div>
           <span className='text-xs truncate overflow-hidden inline-block absolute -bottom-4 left-12'>{handleDate(chat.date)}</span>

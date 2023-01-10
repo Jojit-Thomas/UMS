@@ -52,7 +52,7 @@ function Index() {
             <h5 className='mx-auto'>Hult campuses worldwide: study in Boston, London, San Francisco, Dubai, and Shanghai</h5>
           </div>
         </div>
-          <p className=' mt-16'>Download our brochure to find out more about our uniquely global undergraduate degree.</p>
+        <p className=' mt-16'>Download our brochure to find out more about our uniquely global undergraduate degree.</p>
       </div>
       <div className='w-screen h-[60vh] bg-yellow-50 grid grid-cols-1 sm:grid-cols-2 px-12 sm:px-40 xl:px-64 2xl:px-80 pt-12 sm:pt-0'>
         <div className='w-full h-full flex flex-col justify-center'>

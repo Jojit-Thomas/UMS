@@ -23,6 +23,7 @@ export interface studentApplicationFormType {
   educationalQualification : string,
   password : string,
   date : Date,
+  isBlocked : boolean
 }
 
 
@@ -56,7 +57,8 @@ const studentApplicationSchema = new mongoose.Schema({
   date : {
     type : Date,
     default : new Date()
-  }
+  },
+  isBlocked : Boolean
 }, { _id: false })
 
 

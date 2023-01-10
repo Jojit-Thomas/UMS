@@ -9,7 +9,7 @@ import { useState } from 'react'
 function BlockButton<T extends string[]>({ params, keyId, URL, text }: { params: GridRenderCellParams, keyId: string, URL: string, text: T & { 0: string, 1: string } }) {
   const [isApproved, setIsApproved] = useState<boolean>(params.value);
   const handleBlock = (collegeId: string) => {
-    axios.patch(URL, { collegeId }).then(() => {
+    axios.patch(URL, { [keyId] : collegeId }).then(() => {
       setIsApproved(prev => !prev)
     })
   }

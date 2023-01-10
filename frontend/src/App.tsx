@@ -18,6 +18,7 @@ import UniversityCourse from './Pages/University/Course';
 import UniversityCourseDetails from './Pages/University/CourseDetails';
 import UniversityCollege from './Pages/University/College';
 import UniversityNewCourse from './Pages/University/NewCourse';
+import UniversityAllotment from './Pages/University/Allotment';
 // Student
 import StudentIndex from './Pages/Student/Index';
 import StudentHome from './Pages/Student/Home';
@@ -35,19 +36,13 @@ import CollegeNewDepartment from './Pages/College/NewDepartment';
 import CollegeDepartmentDetails from './Pages/College/DepartmentDetails';
 import CollegeTeacher from './Pages/College/Teacher';
 import CollegeStudent from './Pages/College/Student';
-import { userContext } from './utils/store';
+// import { userContext } from './utils/store';
+import { useDispatch } from 'react-redux';
+import { setDetails } from './Pages/Student/studentSlice';
 
 function App() {
 
-  const { setUser } = useContext(userContext)
-
-  useEffect(() => {
-    const user = localStorage.getItem("student")
-    if(user){
-      setUser(JSON.parse(user))
-    }
-  },[])
-
+  // const { setUser } = useContext(userContext)
 
   return <Fragment>
     <BrowserRouter>
@@ -57,10 +52,11 @@ function App() {
         <Route path='/university' element={<UniversityIndex />}>
           <Route index element={<UniversityHome />} />
           <Route path='course' element={<UniversityCourse />} />
-          <Route path='course/:course' element={<UniversityCourseDetails />} />
+          <Route path='course/:name' element={<UniversityCourseDetails />} />
           <Route path='course/add' element={<UniversityNewCourse />} />
           <Route path='college' element={<UniversityCollege />} />
           <Route path='login' element={<UniversityLogin />} />
+          <Route path='allotment' element={<UniversityAllotment />} />
           {/* <Route path="*" element={<NotFound />} /> */}
         </Route>
         <Route path='/student' element={<StudentIndex/>}>

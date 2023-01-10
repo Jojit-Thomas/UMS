@@ -11,6 +11,10 @@ router.patch('/chat/add', auth.verifyTeacher, teacher.newChat)
 
 router.get('/chat/:department/:subject/:semester', auth.verifyTeacher, teacher.getAllChats)
 
+router.get('/events/:department/:subject/:semester', auth.verifyTeacher, teacher.getAllEvents)
+
 router.get('/people/all/:department/:subject/:semester', auth.verifyTeacher, teacher.allPeople)
+
+router.patch('/event/new/:department/:semester', auth.verifyTeacher, teacher.newEvent)
 
 export default router;

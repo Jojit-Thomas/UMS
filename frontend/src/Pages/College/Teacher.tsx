@@ -28,12 +28,12 @@ const Teacher = () => {
     { field: 'contact', headerName: 'Contact', flex: 10, minWidth: 100 },
     { field: 'email', headerName: 'Email', flex: 15, minWidth: 100 },
     {
-      field: 'isBlocked', headerName: 'Actions', flex: 8, renderCell: (params: GridRenderCellParams) => (
+      field: 'isBlocked', headerName: 'Actions', flex: 10, minWidth: 100, renderCell: (params: GridRenderCellParams) => (
         <BlockButton params={params} URL="/college/teacher/block" keyId='email' text={["Block", "Unblock"]} />
       ),
     },
     {
-      field: '', headerName: 'Actions', flex: 12, renderCell: (params: GridRenderCellParams) => (
+      field: '', headerName: 'Actions', flex: 14, minWidth: 150, renderCell: (params: GridRenderCellParams) => (
         <Button variant='outlined' onClick={() => navigate(`/college/teacher/${params.row.email}`)} >Detailed View</Button>
       ),
     },

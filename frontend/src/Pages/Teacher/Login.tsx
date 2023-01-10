@@ -26,12 +26,12 @@ function Login() {
       .post("/auth/teacher/login", values)
       .then((result) => {
         console.log("success : ", result);
-        localStorage.setItem("teacherAccessToken", result.data.accessToken);
+        localStorage.setItem("teacher", JSON.stringify(result.data));
         navigate('/teacher')
       })
       .catch((error) => {
         console.log(error)
-        console.error("error : ", error.response.data);
+        console.error("error : ", error.response);
         setError(error.response.data)
       });
   };

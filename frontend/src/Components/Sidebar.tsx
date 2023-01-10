@@ -1,3 +1,4 @@
+import { Logout } from '@mui/icons-material'
 import { Paper } from '@mui/material'
 import React, { Dispatch, Fragment, SetStateAction } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -9,7 +10,7 @@ export interface Tab {
   icon: React.ReactElement
 }
 
-function Sidebar({ title, tab, className }: { title: string, tab: Array<Tab>, className ?: string }) {
+function Sidebar({ title, tab, className, logout }: { title: string, tab: Array<Tab>, className?: string, logout?: () => void }) {
   const navigate = useNavigate()
   const location = useLocation();
   return <Fragment>
@@ -29,6 +30,14 @@ function Sidebar({ title, tab, className }: { title: string, tab: Array<Tab>, cl
               </ListItem>
             )
           })
+        }
+        {
+          logout && <ListItem active={false} onClick={() => logout()} >
+            <div id="item">
+              <Logout/>
+              <h4>Logout</h4>
+            </div>
+          </ListItem>
         }
       </Paper>
     </SidebarContainer>

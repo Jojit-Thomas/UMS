@@ -1,8 +1,8 @@
 import React from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import Sidebar, { Tab } from '../../Components/Sidebar'
 import Header from '../../Components/Header'
-import { Book, Dashboard } from '@mui/icons-material'
+import { Book, Dashboard, Logout, People } from '@mui/icons-material'
 import styled from 'styled-components'
 import { Box } from '@mui/system'
 
@@ -29,7 +29,7 @@ const Index = () => {
       name: "Teachers"
     },
     {
-      icon: <Book />,
+      icon: <People />,
       linkTo: "/college/student",
       name: "Students"
     }
@@ -41,12 +41,19 @@ const Index = () => {
   path.splice(0, 2)
   path = path.join("/")
 
+  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem("college");
+    navigate(`/${location.pathname.split("/")[1]}/login`, {replace : true})
+  }
+
   return (
     <>
       {
         (!notRestrictedRoutes.includes(path)) ? <SidebarContainer>
           <div className='hidden md:grid w-screen h-screen grid-cols-12'>
-            <Sidebar title='Tempe University' tab={tab} className='col-span-2' />
+            <Sidebar title='Tempe University' tab={tab} className='col-span-2' logout={logout} />
             <div className='col-span-10'>
               <Header user="User" logout={() => { }} />
               <Box padding={4}>

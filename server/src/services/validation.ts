@@ -86,9 +86,11 @@ const teacherSchema = Joi.object({
 
 
 const courseSchema = Joi.object({
+  _id : Joi.string(),
   name: Joi.string().min(3).max(30).required(),
   qualification: Joi.string().required(),
-  semesters: Joi.array().required()
+  semesters: Joi.array().required(),
+  __v : Joi.number()
 })
 
 

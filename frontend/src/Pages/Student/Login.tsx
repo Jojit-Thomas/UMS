@@ -26,9 +26,7 @@ function Login() {
       .post("/auth/student/login", values)
       .then((result) => {
         console.log("success : ", result);
-        localStorage.setItem("studentAccessToken", result.data.accessToken);
-        localStorage.setItem("studentRefreshToken", result.data.refreshToken);
-        localStorage.setItem("student", JSON.stringify(result.data.user));
+        localStorage.setItem("student", JSON.stringify(result.data));
         navigate('/student')
       })
       .catch((error) => {

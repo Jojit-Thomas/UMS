@@ -27,7 +27,7 @@ const Login = () => {
       .post("/auth/college/login", values)
       .then((result) => {
         console.log("success : ", result);
-        localStorage.setItem("collegeAccessToken", result.data.accessToken);
+        localStorage.setItem("college", result.data.accessToken);
         navigate('/college')
       })
       .catch((error) => {

@@ -6,7 +6,7 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use((config) => {
-  const adminAccessToken = localStorage.getItem("adminAccessToken");
+  const adminAccessToken = localStorage.getItem("university");
   //checking if adminAccessToken exists
   if (adminAccessToken) {
     config.headers = config.headers ?? {};
@@ -18,17 +18,20 @@ instance.interceptors.request.use((config) => {
 
 const interceptor = instance.interceptors.response.use((res => res), err => {
   console.log(err)
-  // const originalRequest = err.config.data;
+  const originalRequest = err.config.data;
   // originalRequest._retry = true;
-  window.location.href = "/university/login"
-  if(err.response.status === 401 && err.response.data.name === 'TokenExpiredError'){
+  if (err.response.status === 400 && err.response.data === "ACCESS_TOKEN_NOTFOUND") {
+    window.location.href = "/university/login"
+  }
+  else if (err.response.status === 401) {
+    window.location.href = "/university/login"
     // instance.interceptors.response.eject(interceptor);
     // let refreshToken = localStorage.getItem("refreshToken")
     // return axios.post("http://localhost:4000/api/auth/access/refresh", {
     //   refreshToken: refreshToken
     // }).then((res) => {
     //   console.log("Refresh token reponse :: ", res)
-    //   let {accessToken, refreshToken} = res.data
+    //   let { accessToken, refreshToken } = res.data
     //   localStorage.setItem("accessToken", accessToken)
     //   localStorage.setItem("refreshToken", refreshToken)
     //   axios.defaults.headers.common['Authorization'] = accessToken;
@@ -39,10 +42,10 @@ const interceptor = instance.interceptors.response.use((res => res), err => {
     //   // return Promise.reject(refreshTokenError);
     //   // window.location.href = "/login"
     // })
-  } else {
+  }
+  else {
     return Promise.reject(err);
   }
 })
-
 
 export default instance;

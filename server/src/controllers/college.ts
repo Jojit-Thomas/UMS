@@ -48,7 +48,7 @@ const fetchApprovedCollege: RequestHandler = async (req, res, next) => {
 const fetchAllDepartment: RequestHandler = async (req, res, next) => {
   try {
     //@ts-ignore
-    const collegeId = req.user.aud
+    const collegeId = req.college.aud
     if (!collegeId) throw createHttpError.InternalServerError()
     let department = await collegeDB.fetchAllDepartment(collegeId);
     res.status(200).json(department)
@@ -79,7 +79,7 @@ const fetchAllCollege: RequestHandler = async (req, res, next) => {
 const newDepartment: RequestHandler = async (req, res, next) => {
   try {
     //@ts-ignore
-    const collegeId = req.user.aud
+    const collegeId = req.college.aud
     if (!collegeId) throw createHttpError.InternalServerError()
     req.body.seats = [{year : moment(new Date).year(), seats: req.body.maxCandidate}]
     await collegeDB.createCourse(collegeId, req.body)
@@ -92,7 +92,7 @@ const newDepartment: RequestHandler = async (req, res, next) => {
 const fetchADepartment: RequestHandler = async (req, res, next) => {
   try{
     //@ts-ignore
-    const collegeId = req.user.aud
+    const collegeId = req.college.aud
     const {department} = req.params;
     if (!collegeId || !department) throw createHttpError.InternalServerError()
     let departmentObj = await collegeDB.fetchADepartment(collegeId, department)
@@ -106,7 +106,7 @@ const fetchADepartment: RequestHandler = async (req, res, next) => {
 const updateDepartment: RequestHandler = async (req, res, next) => {
   try{ 
     //@ts-ignore
-    const collegeId = req.user.aud
+    const collegeId = req.college.aud
     if (!collegeId) throw createHttpError.InternalServerError()
     await college.updateDepartment(collegeId, req.body)
     res.sendStatus(204)

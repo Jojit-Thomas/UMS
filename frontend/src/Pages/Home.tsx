@@ -1,12 +1,15 @@
 import { Box } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import styled from "styled-components"
-
 const Anchor = styled(Link)`
   margin: 20px;
 `
 
 function Home() {
+
+
+
   return (
     <Box width="100vw" display="flex" flexWrap="wrap">
       <Anchor to="/login">Login</Anchor>

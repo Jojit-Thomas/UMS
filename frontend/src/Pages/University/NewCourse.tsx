@@ -113,7 +113,7 @@ const NewCourse: React.FC = () => {
               sx={{ mb: 3 }}
             />
             {formData.semesters.map((semester, semesterIndex) => (
-              <div key={semesterIndex}>
+              <div key={semesterIndex} className='mt-4'>
                 <TextField
                   margin="dense"
                   id={`sem-${semesterIndex}`}
@@ -142,11 +142,11 @@ const NewCourse: React.FC = () => {
                     sx={{ mb: 3 }}
                   />
                 ))}
-                <Box display="flex" justifyContent="center" alignItems="center" width="30%">
                   <Button variant='contained' onClick={() => handleAddSubject(semesterIndex)}>
                     Add Subject
                   </Button>
-                </Box>
+                {/* <Box display="flex" justifyContent="center" alignItems="center" width="40%">
+                </Box> */}
               </div>
             ))}
             <Button onClick={handleAddSemester}>Add Semester</Button>

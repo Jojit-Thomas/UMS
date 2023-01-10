@@ -3,7 +3,7 @@ import { Fragment, useEffect, useState } from 'react'
 import { AutoStories, Dashboard, School } from '@mui/icons-material'
 import Sidebar, { Tab } from '../../Components/Sidebar'
 import styled from 'styled-components'
-import { Outlet, useLocation } from 'react-router-dom'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { Box } from '@mui/material'
 import Header from '../../Components/Header'
 
@@ -26,6 +26,11 @@ function Index() {
       linkTo: "/university/course",
       icon: <AutoStories />
     },
+    {
+      name: "Allotment",
+      linkTo: "/university/allotment",
+      icon: <AutoStories />
+    },
   ]
 
   const location = useLocation();
@@ -43,12 +48,19 @@ function Index() {
     }
   }, [])
 
+  const navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.removeItem("college");
+    navigate(`/${location.pathname.split("/")[1]}/login`, {replace : true})
+  }
+
   return (
     <>
       {
         (!notRestrictedRoutes.includes(path)) ? <SidebarContainer>
           <div className='hidden md:grid w-screen h-screen grid-cols-12'>
-            <Sidebar title='Tempe University' tab={tab} className='col-span-2' />
+            <Sidebar title='Tempe University' tab={tab} className='col-span-2' logout={logout} />
             <div className='col-span-10'>
               <Header user="User" logout={() => { }} />
               <Box padding={4}>

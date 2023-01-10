@@ -6,16 +6,23 @@ interface Student {
   email : string
 }
 
+export interface ClassEvents {
+  message : string,
+  subject : string,
+  url : string, 
+  date : Date
+}
+
 export interface Chats {
   name : string,
-  email : string,
+  userId : Types.ObjectId,
   subject : string,
   date : Date,
   message : string,
 }
 
 export interface ClassType {
-  _id ?: Types.ObjectId,
+  _id : Types.ObjectId,
   year : number,
   course : string,//relation to course
   collegeId : string,
@@ -23,6 +30,7 @@ export interface ClassType {
   classTeacher ?: string,
   students : [Student],
   chats : [Chats]
+  events : [ClassEvents]
   // exams : [{
   //   _id : Types.ObjectId
   //   sem : number,
@@ -39,11 +47,21 @@ const studentSchema = new mongoose.Schema({
 
 const chatSchema = new mongoose.Schema({
   name : String,
-  email : String,
+  userId : Types.ObjectId,
   subject : String,
   date : Date,
   message : String
 }, {_id : false})
+
+const eventSchema = new mongoose.Schema({
+  message : String,
+  subject : String,
+  url : String,
+  date : {
+    type : Date,
+    default : new Date()
+  }
+}, {_id: false})
 
 const classSchema = new mongoose.Schema({
   year: Number,
@@ -56,7 +74,8 @@ const classSchema = new mongoose.Schema({
   },
   sem : Number,
   students : [studentSchema],
-  chats : [chatSchema]
+  chats : [chatSchema],
+  events : [eventSchema],
 })
 
-export const classModel = mongoose.model("classModel", classSchema, CLASS_COLLECTION)
+export const classModel = mongoose.model<ClassType>("classModel", classSchema, CLASS_COLLECTION)

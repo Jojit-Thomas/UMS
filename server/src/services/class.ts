@@ -1,5 +1,5 @@
 import createHttpError from "http-errors"
-import { Chats, ClassType, classModel } from "../models/class_model"
+import { Chats, ClassEvents, ClassType, classModel } from "../models/class_model"
 
 const createClass = (body: ClassType): Promise<void> => {
   return new Promise((resolve, reject) => {
@@ -29,12 +29,12 @@ const newChat = (classId: string, chats: Chats): Promise<void> => {
   })
 }
 
-const teacherAllChats = (course: string, subject: string, semester : number): Promise<Chats[]> => {
+const teacherAllChats = (collegeId : string, course: string, subject: string, semester : number): Promise<Chats[]> => {
   return new Promise((resolve, reject) => {
     //@ts-ignore
     classModel.aggregate([
       {
-        $match: { course: course, sem : semester }
+        $match: { collegeId : collegeId, course: course, sem : semester }
       },
       {
         $unwind: "$chats"
@@ -57,6 +57,36 @@ const teacherAllChats = (course: string, subject: string, semester : number): Pr
     })
   })
 }
+
+const teacherAllEvents = (collegeId : string, course: string, subject: string, semester : number): Promise<Chats[]> => {
+  return new Promise((resolve, reject) => {
+    //@ts-ignore
+    classModel.aggregate([
+      {
+        $match: { collegeId: collegeId, course: course, sem : semester }
+      },
+      {
+        $unwind: "$events"
+      },
+      {
+        $match: { "events.subject": subject } 
+      },
+      {
+        $project: { "events": 1, "_id": 0 }
+      },
+      {
+        $replaceRoot: { newRoot: "$events" }
+      }, 
+      {
+        $sort: {date : 1}
+      }
+    ]).then((chats) => resolve(chats)).catch(err => {
+      console.log(err)
+      reject(createHttpError.InternalServerError())
+    })
+  })
+}
+
 const allChats = (classId: string, subject: string): Promise<Chats[]> => {
   return new Promise((resolve, reject) => {
     //@ts-ignore
@@ -86,13 +116,61 @@ const allChats = (classId: string, subject: string): Promise<Chats[]> => {
   })
 }
 
-const allStudents = (department: string, semester : string) => {
+const findAllStudents = ( collegeId : string, department: string, semester : string) => {
   return new Promise((resolve, reject) => {
-    classModel.findOne({department : department, semester : semester}, {_id : 0, students : 1, sem : 1, collegeId : 1, course : 1}).then((students) => resolve(students)).catch(err => {
+    classModel.findOne({ collegeId : collegeId, course : department, semester : semester}, {_id : 0, classId : 1,  students : 1, sem : 1, collegeId : 1, course : 1}).then((students) => resolve(students)).catch(err => {
       console.log(err)
       reject(createHttpError.InternalServerError())
     })
   })
 }
 
-export default { createClass, fetchClassDetails, newChat, allChats, allStudents, teacherAllChats }
+const findAllStudentsByClassId = ( classId : string) => {
+  return new Promise((resolve, reject) => {
+    classModel.findOne({ classId : classId}, {_id : 0, students : 1, sem : 1, collegeId : 1, course : 1}).then((students) => resolve(students)).catch(err => {
+      console.log(err)
+      reject(createHttpError.InternalServerError())
+    })
+  })
+}
+
+const newEvent = (collegeId : string, department : string, semester : number, body : ClassEvents): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    classModel.updateOne({collegeId : collegeId, course : department, sem : semester  }, {$push : {events : body}}).then(() => resolve()).catch(err => {
+      console.log(err);
+      reject(createHttpError.InternalServerError())
+    })
+  })
+}
+
+const allEvents = (classId: string, subject: string): Promise<Chats[]> => {
+  // console.log("class : : ; : : ", classId, subject)
+  return new Promise((resolve, reject) => {
+    //@ts-ignore
+    classModel.aggregate([
+      {
+        $match: { classId : classId }
+      },
+      {
+        $unwind: "$events"
+      },
+      {
+        $match: { "events.subject": subject }
+      },
+      {
+        $project: { "events": 1, "_id": 0 }
+      },
+      {
+        $replaceRoot: { newRoot: "$events" }
+      }, 
+      {
+        $sort: {date : 1}
+      }
+    ]).then((chats) => resolve(chats)).catch(err => {
+      console.log(err)
+      reject(createHttpError.InternalServerError())
+    })
+  })
+}
+
+export default { createClass, fetchClassDetails, newChat, allChats, findAllStudents, findAllStudentsByClassId, teacherAllChats, newEvent, allEvents, teacherAllEvents }

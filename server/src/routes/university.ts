@@ -19,8 +19,17 @@ router.post("/course/add", department.createCourse)
 
 router.get("/college/all", college.fetchAllCollege)
 
-router.get("/course/all" , course.allCourses)
+router.get("/course/all", course.allCourses)
 
-router.get("/allotment", student.allotment)
+router.get("/course/:name", course.course)
+
+router.put("/course/edit", course.updateCourse)
+
+router.post("/allotment", student.allotment)
+
+router.get("/allotment/all", student.getAllAllotmentThisYear)
+
+router.patch('/allotment/approval/invert', authMW.verifyUniversity, student.blockStudentApplicants)
+
 
 export default router;

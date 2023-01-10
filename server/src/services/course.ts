@@ -32,4 +32,13 @@ const fetchACourse = (name : string):Promise<any> => {
   })
 }
 
-export default { createCourse, fetchAllCourse, fetchACourse }
+const updateCourse = (id: string, body: Course): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    courseModel.updateOne({_id : id}, {$set : body}).then(() => resolve()).catch((err) => {
+      console.log(err)
+      reject(createHttpError.InternalServerError())
+    })
+  })
+} 
+
+export default { createCourse, fetchAllCourse, fetchACourse, updateCourse }

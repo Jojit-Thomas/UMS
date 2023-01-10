@@ -26,7 +26,7 @@ function Login() {
       .post("/auth/university/login", values)
       .then((result) => {
         console.log("success : ", result);
-        localStorage.setItem("adminAccessToken", result.data.adminAccessToken);
+        localStorage.setItem("university", result.data.adminAccessToken);
         navigate('/university')
       })
       .catch((error) => {
