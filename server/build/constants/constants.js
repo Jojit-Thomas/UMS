@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ALLOTMENT_COLLECTION = exports.CLASS_COLLECTION = exports.DEPARTMENT_COLLECTION = exports.COURSE_COLLECTION = exports.SUBJECTS_COLLECTION = exports.TEACHERS_COLLECTION = exports.COLLEGE_COLLECTION = exports.STUDENT_APPLICATION_FORM = exports.STUDENT_COLLECTION = void 0;
+exports.STUDENT_COLLECTION = "students";
+exports.STUDENT_APPLICATION_FORM = "studentAllotment";
+exports.COLLEGE_COLLECTION = "college";
+exports.TEACHERS_COLLECTION = "teachers";
+exports.SUBJECTS_COLLECTION = "subjects";
+exports.COURSE_COLLECTION = "Course";
+exports.DEPARTMENT_COLLECTION = "Department";
+exports.CLASS_COLLECTION = "class";
+exports.ALLOTMENT_COLLECTION = "Allotment";
