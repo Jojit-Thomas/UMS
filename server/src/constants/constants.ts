@@ -6,3 +6,4 @@ export const SUBJECTS_COLLECTION = "subjects";
 export const COURSE_COLLECTION = "Course";
 export const DEPARTMENT_COLLECTION = "Department";
 export const CLASS_COLLECTION = "class";
+export const ALLOTMENT_COLLECTION = "Allotment";

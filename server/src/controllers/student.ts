@@ -12,6 +12,7 @@ import collegeDB from "../services/college";
 import classDB from "../services/class";
 import { Student } from "../models/student_model";
 import { Chats } from "../models/class_model";
+import { createAllotmentDoc } from "../services/allotment";
 dotenv.config();
 
 var instance = new Razorpay({
@@ -112,7 +113,7 @@ const allSubjects: RequestHandler = async (req, res, next) => {
 }
 
 
-const allotment: RequestHandler = async (req, res, next) => {
+const allotment = async () => {
   try {
     let date = moment(new Date).subtract(1, "year").toDate()
     console.log(date)
@@ -134,9 +135,11 @@ const allotment: RequestHandler = async (req, res, next) => {
         await studentDB.createStudent(newStudnet)
       })
     })
-    res.sendStatus(204)
+    await createAllotmentDoc(selectedStudents)
+    console.log(selectedStudents)
+    console.log("allotment success ")
   } catch (err: any) {
-    res.status(err.status || 500).json(err.message || "Internal server error")
+    console.log("err in allotment : ",err )
   }
 }
 
@@ -242,8 +245,11 @@ export default { createStudentAllotment, createStudent, allStudents, blockStuden
 //       let department = college!.department.find(d => d.name === preference.course);
 
 //       // Check if there are any available seats in the department
-//       let yearIndex = department?.seats.findIndex(x => x.year === moment(new Date).year())
-//       console.log(department!.seats[yearIndex!].seats)
+//       let yearIndex = department?.seats.findIndex(x => {
+//         console.log(x.year, moment(new Date).year() -1)
+//         return x.year === moment(new Date).year() -1
+//       })
+//       console.log(department!.seats[yearIndex!], yearIndex)
 //       if (department!.seats[yearIndex!].seats < department?.maxCandidate!) {
 //         // Accept the student to the department and decrease the number of available seats
 //         department!.seats[yearIndex!].seats++;
@@ -266,6 +272,8 @@ function assignToCollege(students: studentApplicationFormType[], colleges: Colle
   const collegeMap = new Map();
   for (const college of colleges) {
     for (const department of college.department) {
+      //Initiallizing the bookes seats as 0 it can go upto department.maxCandidate
+      department.seats = 0;
       const key = `${college.collegeId}-${department.name}`;
       collegeMap.set(key, { college, department });
     }
@@ -280,10 +288,9 @@ function assignToCollege(students: studentApplicationFormType[], colleges: Colle
       const { college, department } = collegeMap.get(key) || {};
       if (!department) continue;
       // Check if there are any available seats in the department
-      let yearIndex = department.seats.findIndex(x => x.year === moment(new Date).year())
-      if (department.seats[yearIndex].seats < department.maxCandidate) {
+      if (department.seats < department.maxCandidate) {
         // Accept the student to the department and decrease the number of available seats
-        department.seats[yearIndex].seats++;
+        department.seats++;
         selectedStudents.push({ collegeId: college.collegeId, course: department.name, name: student.name, email: student.email });
         break;
       } else {

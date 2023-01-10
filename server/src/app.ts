@@ -10,10 +10,11 @@ import studentRouter from "./routes/student";
 import collegeRouter from "./routes/college";
 import teacherRouter from "./routes/teacher";
 import unviersityRouter from "./routes/university";
-
-
+import {initScheduledJobs} from "./services/allotment";
 import { connectRedis } from './config/redis'
 const client = connectRedis();
+
+initScheduledJobs();
 
 import dotenv from "dotenv"
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
@@ -46,7 +47,7 @@ process.on("SIGINT", () => {
 const app = express();
 
 
-app.use(cors({origin: "http://localhost:3000"}));
+app.use(cors({origin: "http://localhost:3303"}));
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

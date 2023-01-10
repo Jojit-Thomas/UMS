@@ -8,11 +8,6 @@ interface Subjects {
   teacher: string
 }
 
-interface Seats {
-  year : number,
-  seats : number
-}
-
 export interface Department {
   name: string,
   qualification: string,
@@ -21,7 +16,7 @@ export interface Department {
     sem: number,
     subjects: Subjects[]
   }],
-  seats : Seats[]
+  seats : number
 }
 
 export interface College {

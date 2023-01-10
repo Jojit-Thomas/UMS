@@ -2,8 +2,12 @@ import axios from './axios';
 import { Fragment, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import LoginComponent from "../../Components/LoginComponent"
+import { useDispatch } from 'react-redux';
+import { setDetails } from './teacherSlice';
 
 function Login() {
+
+  const dispatch = useDispatch();
 
   const navigate = useNavigate()
   interface Values {
@@ -27,6 +31,7 @@ function Login() {
       .then((result) => {
         console.log("success : ", result);
         localStorage.setItem("teacher", JSON.stringify(result.data));
+        dispatch(setDetails(result.data.user))
         navigate('/teacher')
       })
       .catch((error) => {

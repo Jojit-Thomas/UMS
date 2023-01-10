@@ -35,14 +35,14 @@ const Course = () => {
   ];
 
   return (
-    <Box width="100%">
+    <div className='w-full '>
       <Box padding={5}>
         <div className='flex flex-row-reverse py-2'>
           <Button variant='contained' startIcon={<Add />} onClick={() => navigate("/university/course/add")} >New Course</Button>
         </div>
         <DataTable rows={course} cols={cols} uniqueKey="name" />
       </Box>
-    </Box>
+    </div>
   )
 }
 
