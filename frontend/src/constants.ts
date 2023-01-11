@@ -1,1 +1,1 @@
-export const BASE_URL = "http://umsapi.jojit.ml"
+export const BASE_URL = "http://umsapi.jojit.ml/api"
