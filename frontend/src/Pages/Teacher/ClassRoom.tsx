@@ -185,7 +185,6 @@ const ModalBox = () => {
       result += characters.charAt(Math.floor(Math.random() * characters.length));
     }
     const url = `https://jojit.ml/lobby?roomId=${result}`
-    navigator.clipboard.writeText(url);
     setUrl(url)
   }, [])
 
