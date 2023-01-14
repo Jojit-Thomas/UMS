@@ -39,7 +39,7 @@ process.on("SIGINT", () => {
     mongoose_1.default.connection.close();
 });
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)({ origin: ["http://localhost:3000", "http://localhost:3303", "http://tempeuniversity.jojit.ml", "https://tempeuniversity.jojit.ml"] }));
+app.use((0, cors_1.default)({ origin: ["http://localhost:3000", "http://localhost:3303", "http://ums.jojit.ml", "https://ums.jojit.ml"] }));
 app.use((0, morgan_1.default)("dev"));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));

@@ -47,7 +47,7 @@ process.on("SIGINT", () => {
 const app = express();
 
 
-app.use(cors({origin: ["http://localhost:3000","http://localhost:3303", "http://tempeuniversity.jojit.ml", "https://tempeuniversity.jojit.ml"]})); 
+app.use(cors({origin: ["http://localhost:3000","http://localhost:3303", "http://ums.jojit.ml", "https://ums.jojit.ml"]})); 
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
